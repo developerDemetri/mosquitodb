@@ -14,4 +14,14 @@ router.get('/', function(req, res) {
   res.render('home');
 });
 
+router.get('/about', function(req, res) {
+  req.session.mdb_key = mdb_key;
+  res.render('about');
+});
+
+router.get('/developer', function(req, res) {
+  req.session.mdb_key = mdb_key;
+  res.render('developer');
+});
+
 module.exports = router;

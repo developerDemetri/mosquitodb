@@ -2,3 +2,27 @@ body {
   background-color: #fcfcfc;
   color: #263238;
 }
+
+.navbar-centered {
+        float: none;
+        text-align: center;
+}
+
+.navbar-centered .navbar-nav {
+        float: none;
+        text-align: center;
+}
+.navbar-centered .navbar-nav > li {
+    float: none;
+}
+.navbar-centered .nav > li {
+    display: inline;
+}
+.navbar-centered .nav > li > a {
+    display: inline-block;
+}
+
+.navbar {
+  background-color: #4db6ac;
+  color: #263238;
+}

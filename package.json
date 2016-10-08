@@ -4,6 +4,7 @@
   "private": true,
   "description": "DB for centralizing Mosquito population data",
   "scripts": {
+    "setup": "node ./bin/setup.js",
     "start": "node ./bin/www",
     "test": "./node_modules/istanbul/lib/cli.js cover -x **/secret_settings.js ./node_modules/mocha/bin/_mocha"
   },
@@ -14,6 +15,7 @@
     "ejs": "^2.4.2",
     "express": "~4.13.4",
     "express-session": "^1.14.0",
+    "htmlparser2": "^3.9.1",
     "ioredis": "^2.3.0",
     "morgan": "~1.7.0",
     "node-uuid": "^1.4.7",

@@ -1,6 +1,8 @@
 'use strict';
 
 let pg_tool = require('./pg_tool');
+let fs = require('fs');
+let async_loop = require('node-async-loop');
 
 const allowed_values = require('./allowed_values');
 const counties_list = require('./county_parser').crawl();
@@ -10,35 +12,102 @@ const species_insert_query = 'INSERT INTO mosquito.species (name) VALUES ($1)';
 const state_insert_query = 'INSERT INTO mosquito.state (code, name) VALUES ($1,$2)';
 const county_insert_query = 'INSERT INTO mosquito.county (name, state_code) VALUES ($1, $2)';
 
-function createDB() {
-  //run setup.sql
-  console.log('setting up DATABASE!!');
+function createSchema() {
+  console.log('Creating Schema...');
+  let create_query = fs.readFileSync('bin/create_schema.sql').toString();
+  pg_tool.query(create_query, [], function(error, rows) {
+    if (error) {
+      console.log('ERROR Creating Schema: ', error);
+      process.exit(1);
+    }
+    else {
+      console.log('Schema successfully created.');
+      insertTraps();
+    }
+  });
 }
 
 function insertTraps() {
-  let traps = allowed_values.trap_list;
   console.log('Inserting traps...');
+  let traps = allowed_values.trap_list;
+  if (Object.keys(traps).length > 0) {
+    async_loop(traps, function (item, next) {
+      pg_tool.query(trap_insert_query, [item.key, item.value], function(error, rows) {
+        if (error) {
+          console.log('ERROR Inserting Traps: ', error);
+          process.exit(1);
+        }
+        else {
+          next();
+        }
+      });
+    }, function () {
+      console.log('Traps inserted.');
+      insertSpecies();
+    });
+  }
+  else {
+    console.log('ERROR Inserting Traps: trap list is empty.');
+    process.exit(1);
+  }
 }
 
 function insertSpecies() {
   let species = allowed_values.species_list;
-  console.log('Inserting species...');
+  if (species.length > 0) {
+    async_loop(species, function (item, next) {
+      pg_tool.query(species_insert_query, [item], function(error, rows) {
+        if (error) {
+          console.log('ERROR Inserting Species: ', error);
+          process.exit(1);
+        }
+        else {
+          next();
+        }
+      });
+    }, function () {
+      console.log('Species inserted.');
+      insertStates();
+    });
+  }
+  else {
+    console.log('ERROR Inserting Species: species list is empty.');
+    process.exit(1);
+  }
 }
 
 function insertStates() {
   let states = allowed_values.state_list;
   console.log('Inserting states...');
+  if (Object.keys(states).length > 0) {
+    async_loop(states, function (item, next) {
+      pg_tool.query(state_insert_query, [item.value, item.key], function(error, rows) {
+        if (error) {
+          console.log('ERROR Inserting States: ', error);
+          process.exit(1);
+        }
+        else {
+          next();
+        }
+      });
+    }, function () {
+      console.log('States inserted.');
+      insertCounties();
+    });
+  }
+  else {
+    console.log('ERROR Inserting States: state list is empty.');
+    process.exit(1);
+  }
 }
 
 function insertCounties() {
   console.log('Inserting counties...');
+  //TODO: add counties from html parsing
+  console.log('Fresh DB setup.');
+  process.exit(0);
 }
 
 // setup script //
 console.log('Setting up fresh DB...');
-createDB();
-insertTraps();
-insertSpecies();
-insertStates();
-insertCounties();
-console.log('Fresh DB setup.');
+createSchema();

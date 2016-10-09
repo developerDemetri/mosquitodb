@@ -103,9 +103,28 @@ function insertStates() {
 
 function insertCounties() {
   console.log('Inserting counties...');
-  //TODO: add counties from html parsing
-  console.log('Fresh DB setup.');
-  process.exit(0);
+  if (counties_list.length > 0) {
+    async_loop(counties_list, function (item, next) {
+      let state_code = allowed_values.state_list[item.state];
+      pg_tool.query(county_insert_query, [item.name, state_code], function(error, rows) {
+        if (error) {
+          console.log('ERROR Inserting Counties: ', error);
+          process.exit(1);
+        }
+        else {
+          next();
+        }
+      });
+    }, function () {
+      console.log('Counties inserted.');
+      console.log('Fresh DB setup.');
+      process.exit(0);
+    });
+  }
+  else {
+    console.log('ERROR Inserting Species: species list is empty.');
+    process.exit(1);
+  }
 }
 
 // setup script //

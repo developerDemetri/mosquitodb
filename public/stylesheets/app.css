@@ -26,3 +26,20 @@ body {
   background-color: #4db6ac;
   color: #263238;
 }
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+label {
+  display: block;
+}
+
+.row {
+  margin-top: 3rem;
+}

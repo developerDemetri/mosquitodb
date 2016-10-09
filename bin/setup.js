@@ -122,7 +122,7 @@ function insertCounties() {
     });
   }
   else {
-    console.log('ERROR Inserting Species: species list is empty.');
+    console.log('ERROR Inserting Counties: counties list is empty.');
     process.exit(1);
   }
 }

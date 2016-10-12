@@ -121,4 +121,32 @@ router.get('/species', function(req, res) {
   }
 });
 
+router.get('/traps', function(req, res) {
+  if (req.session.mdb_key === mdb_key) {
+    pg_tool.query('SELECT id, name FROM mosquito.trap', [], function(error, rows) {
+      if (error) {
+        let result = {
+          "status": 500,
+          "error": 'Server Error'
+        };
+        res.send(result);
+      }
+      else {
+        let result = {
+          "status": 200,
+          "traps": rows
+        };
+        res.send(result);
+      }
+    });
+  }
+  else {
+    let result = {
+      "status": 401,
+      "error": 'Unauthorized Request'
+    };
+    res.send(result);
+  }
+});
+
 module.exports = router;

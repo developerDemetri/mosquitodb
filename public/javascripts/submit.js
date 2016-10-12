@@ -2,9 +2,6 @@
 
 angular.module('mosquitoApp').controller('submitController', function ($scope, $http, $timeout) {
 
-  let states = [];
-  let county_temp = 'Select a State';
-
   $scope.states = [];
   $scope.counties = [];
   $scope.species = [];
@@ -68,5 +65,11 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       }
     });
   }
+
+  $scope.$watch('state', function(newvalue, oldvalue) {
+    if (newvalue) {
+      populateCounties();
+    }
+  });
 
 });

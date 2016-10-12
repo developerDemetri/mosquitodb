@@ -30,18 +30,21 @@
           <div class="col-md-4 col-md-offset-1">
             <label for="state">State*</label>
             <select ng-model="state" ng-options="item.code as item.name for item in states" id="state" class="selectpicker" required>
+              <option value="">Pick One</option>
               <!-- will be ajax filled -->
             </select>
           </div>
           <div class="col-md-4">
             <label for="county">County*</label>
             <select ng-model="county" ng-options="item.id as item.name for item in counties" id="county" class="selectpicker" required>
+              <option value="">Pick One</option>
               <!-- will be ajax filled -->
             </select>
           </div>
           <div class="col-md-3">
             <label for="species">Species*</label>
             <select ng-model="spec" ng-options="item.id as item.name for item in species" id="species" class="selectpicker" required>
+              <option value="">Pick One</option>
               <!-- will be ajax filled -->
             </select>
           </div>
@@ -50,6 +53,7 @@
           <div class="col-md-4 col-md-offset-1">
             <label for="trap">Trap Type*</label>
             <select id="trap" ng-model="trap" ng-options="item.id as item.name for item in traps" class="selectpicker" required>
+              <option value="">Pick One</option>
               <!-- will be ajax filled -->
             </select>
           </div>

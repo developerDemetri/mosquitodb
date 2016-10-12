@@ -8,7 +8,7 @@
     <script type="text/javascript" src="javascripts/submit.js"></script>
   </head>
   <%- include('navbar'); %>
-  <body ng-controller="submitController">
+  <body ng-app="mosquitoApp" ng-controller="submitController">
     <div class="container">
       <h1 class="text-center">Submit Data</h1>
       <div class="manual-form">
@@ -29,26 +29,20 @@
         <div class="row">
           <div class="col-md-4 col-md-offset-1">
             <label for="state">State*</label>
-            <select id="state" class="selectpicker" required>
+            <select ng-model="state" ng-options="item.code as item.name for item in states" id="state" class="selectpicker" required>
               <!-- will be ajax filled -->
-              <option>AZ</option>
-              <option>HI</option>
             </select>
           </div>
           <div class="col-md-4">
             <label for="county">County*</label>
-            <select id="county" class="selectpicker" required>
+            <select ng-model="county" ng-options="item.id as item.name for item in counties" id="county" class="selectpicker" required>
               <!-- will be ajax filled -->
-              <option>Maricopa</option>
-              <option>Honolulu</option>
             </select>
           </div>
           <div class="col-md-3">
             <label for="species">Species*</label>
-            <select id="species" class="selectpicker" required>
+            <select ng-model="spec" ng-options="item.id as item.name for item in species" id="species" class="selectpicker" required>
               <!-- will be ajax filled -->
-              <option>Aedes Albopictus</option>
-              <option>Aedes Aegypti</option>
             </select>
           </div>
         </div>
@@ -72,7 +66,7 @@
         </div>
         <div class="row">
           <div class="col-md-10 col-md-offset-1">
-            <label for="wnv-results">Comments</label>
+            <label for="comment">Comments</label>
             <textarea id="comment" class="form-control" placeholder="Additional Comments..."></textarea>
           </div>
         </div>

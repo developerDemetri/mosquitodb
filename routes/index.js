@@ -26,17 +26,18 @@ router.get('/developer', function(req, res) {
 });
 
 router.get('/states', function(req, res) {
+  let result;
   if (req.session.mdb_key === mdb_key) {
     pg_tool.query('SELECT code, name FROM mosquito.state', [], function(error, rows) {
       if (error) {
-        let result = {
+        result = {
           "status": 500,
           "error": 'Server Error'
         };
         res.send(result);
       }
       else {
-        let result = {
+        result = {
           "status": 200,
           "states": rows
         };
@@ -45,7 +46,7 @@ router.get('/states', function(req, res) {
     });
   }
   else {
-    let result = {
+    result = {
       "status": 401,
       "error": 'Unauthorized Request'
     };
@@ -54,6 +55,7 @@ router.get('/states', function(req, res) {
 });
 
 router.get('/counties/:state', function(req, res) {
+  let result;
   if (req.session.mdb_key === mdb_key) {
     let state_re = /^[a-zA-Z]{2}$/;
     if (checkInput(req.params.state,'string',state_re)) {
@@ -61,14 +63,14 @@ router.get('/counties/:state', function(req, res) {
       state = state.toUpperCase();
       pg_tool.query('SELECT id, name FROM mosquito.county WHERE state_code=$1 ORDER BY name ASC', [state], function(error, rows) {
         if (error) {
-          let result = {
+          result = {
             "status": 500,
             "error": 'Server Error'
           };
           res.send(result);
         }
         else {
-          let result = {
+          result = {
             "status": 200,
             "counties": rows
           };
@@ -77,7 +79,7 @@ router.get('/counties/:state', function(req, res) {
       });
     }
     else {
-      let result = {
+      result = {
         "status": 400,
         "error": 'Invalid State Code'
       };
@@ -85,7 +87,7 @@ router.get('/counties/:state', function(req, res) {
     }
   }
   else {
-    let result = {
+    result = {
       "status": 401,
       "error": 'Unauthorized Request'
     };
@@ -94,17 +96,18 @@ router.get('/counties/:state', function(req, res) {
 });
 
 router.get('/species', function(req, res) {
+  let result;
   if (req.session.mdb_key === mdb_key) {
     pg_tool.query('SELECT id, name FROM mosquito.species', [], function(error, rows) {
       if (error) {
-        let result = {
+        result = {
           "status": 500,
           "error": 'Server Error'
         };
         res.send(result);
       }
       else {
-        let result = {
+        result = {
           "status": 200,
           "species": rows
         };
@@ -113,7 +116,7 @@ router.get('/species', function(req, res) {
     });
   }
   else {
-    let result = {
+    result = {
       "status": 401,
       "error": 'Unauthorized Request'
     };
@@ -122,17 +125,18 @@ router.get('/species', function(req, res) {
 });
 
 router.get('/traps', function(req, res) {
+  let result;
   if (req.session.mdb_key === mdb_key) {
     pg_tool.query('SELECT id, name FROM mosquito.trap', [], function(error, rows) {
       if (error) {
-        let result = {
+        result = {
           "status": 500,
           "error": 'Server Error'
         };
         res.send(result);
       }
       else {
-        let result = {
+        result = {
           "status": 200,
           "traps": rows
         };
@@ -141,7 +145,7 @@ router.get('/traps', function(req, res) {
     });
   }
   else {
-    let result = {
+    result = {
       "status": 401,
       "error": 'Unauthorized Request'
     };

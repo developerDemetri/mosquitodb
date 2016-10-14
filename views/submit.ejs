@@ -11,19 +11,22 @@
   <body ng-app="mosquitoApp" ng-controller="submitController">
     <div class="container">
       <h1 class="text-center">Submit Data</h1>
+      <div class="alert alert-warning col-md-10 col-md-offset-1 text-center" ng-show="isError">
+        Please fill out all required fields!
+      </div>
       <div class="manual-form">
         <div class="row">
           <div class="col-md-2 col-md-offset-1">
             <label for="year">Year*</label>
-            <input class="form-control" id="year" type="number" min="1900" max="2017" placeholder="Year" required/>
+            <input class="form-control" ng-model="year" type="number" min="1900" max="2017" placeholder="Year" required/>
           </div>
           <div class="col-md-2 col-md-offset-2">
             <label for="month">Month of Year</label>
-            <input class="form-control" id="month" type="number" min="1" max="12" placeholder="Month" required/>
+            <input class="form-control" ng-model="month"  type="number" min="1" max="12" placeholder="Month" required/>
           </div>
           <div class="col-md-2 col-md-offset-2">
             <label for="week">Week of Year</label>
-            <input class="form-control" id="week" type="number" min="1" max="52" placeholder="Week" required/>
+            <input class="form-control" ng-model="week" type="number" min="1" max="52" placeholder="Week" required/>
           </div>
         </div>
         <div class="row">
@@ -31,21 +34,18 @@
             <label for="state">State*</label>
             <select ng-model="state" ng-options="item.code as item.name for item in states" id="state" class="selectpicker" required>
               <option value="">Pick One</option>
-              <!-- will be ajax filled -->
             </select>
           </div>
           <div class="col-md-4">
             <label for="county">County*</label>
             <select ng-model="county" ng-options="item.id as item.name for item in counties" id="county" class="selectpicker" required>
               <option value="">Pick One</option>
-              <!-- will be ajax filled -->
             </select>
           </div>
           <div class="col-md-3">
             <label for="species">Species*</label>
             <select ng-model="spec" ng-options="item.id as item.name for item in species" id="species" class="selectpicker" required>
               <option value="">Pick One</option>
-              <!-- will be ajax filled -->
             </select>
           </div>
         </div>
@@ -54,27 +54,26 @@
             <label for="trap">Trap Type*</label>
             <select id="trap" ng-model="trap" ng-options="item.id as item.name for item in traps" class="selectpicker" required>
               <option value="">Pick One</option>
-              <!-- will be ajax filled -->
             </select>
           </div>
           <div class="col-md-2">
             <label for="nights">Trap Nights</label>
-            <input class="form-control" id="nights" type="number" min="1" placeholder="# Nights"/>
+            <input class="form-control" ng-model="nights" type="number" min="1" placeholder="# Nights"/>
           </div>
           <div class="col-md-2 col-md-offset-2">
             <label for="wnv-results">WNV Results*</label>
-            <input class="form-control" id="wnv-results" type="number" min="0" placeholder="# WNV" required/>
+            <input class="form-control" ng-model="wnv_results" type="number" min="0" placeholder="# WNV" required/>
           </div>
         </div>
         <div class="row">
           <div class="col-md-10 col-md-offset-1">
             <label for="comment">Comments</label>
-            <textarea id="comment" class="form-control" placeholder="Additional Comments..."></textarea>
+            <textarea ng-model="comment" class="form-control" placeholder="Additional Comments..."></textarea>
           </div>
         </div>
         <div class="row">
           <div class="col-md-11">
-            <button class="btn btn-success pull-right">Submit</button>
+            <button class="btn btn-success pull-right" ng-click="submitData();">Submit</button>
           </div>
         </div>
       </div>

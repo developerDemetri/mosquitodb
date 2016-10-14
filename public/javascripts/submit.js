@@ -7,10 +7,17 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.species = [];
   $scope.traps = [];
 
+  $scope.isError = false;
+  $scope.year = null;
+  $scope.month = null;
+  $scope.week = null;
   $scope.state = null;
   $scope.county = null;
   $scope.spec = null;
   $scope.trap = null;
+  $scope.nights = null;
+  $scope.wnv_results = null;
+  $scope.comment = null;
 
   $http.get(getServer()+'/states').then(function(response) {
     if (response.data.status === 200) {
@@ -71,5 +78,40 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       populateCounties();
     }
   });
+
+  $scope.submitData = function() {
+    if ($scope.year && $scope.state && $scope.county && $scope.spec && $scope.trap && $scope.wnv_results) {
+      $scope.isError = false;
+      var sumbmission = $.param({
+        "year": $scope.year,
+        "month": $scope.month,
+        "week": $scope.week,
+        "state": $scope.state,
+        "county": $scope.county,
+        "species": $scope.spec ,
+        "trap": $scope.trap,
+        "nights": $scope.nights,
+        "wnv_results": $scope.wnv_results,
+        "comment": $scope.comment
+      });
+      var config = {
+          headers : {
+              'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+          }
+      }
+      $http.post(getServer()+'/submit', sumbmission, config)
+      .success(function (data, status, headers, config) {
+          console.log('submitted');
+          console.log(data);
+      })
+      .error(function (data, status, header, config) {
+          console.log('error!');
+          console.log(data);
+      });
+    }
+    else {
+      $scope.isError = true;
+    }
+  }
 
 });

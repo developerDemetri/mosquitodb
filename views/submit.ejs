@@ -57,6 +57,16 @@
             </select>
           </div>
           <div class="col-md-2">
+            <label for="pools">Pools*</label>
+            <input class="form-control" ng-model="pools" type="number" min="1" placeholder="# Pools"/>
+          </div>
+          <div class="col-md-2 col-md-offset-2">
+            <label for="individuals">Individuals</label>
+            <input class="form-control" ng-model="individuals" type="number" min="0" placeholder="# Individuals" required/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 col-md-offset-1">
             <label for="nights">Trap Nights</label>
             <input class="form-control" ng-model="nights" type="number" min="1" placeholder="# Nights"/>
           </div>

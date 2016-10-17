@@ -5,7 +5,7 @@ let express = require('express');
 let pg_tool = require('../bin/pg_tool');
 let redis_tool = require('../bin/redis_tool');
 let session_tool = require('../bin/session_tool');
-let mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
+const mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
 let checkInput = require('../bin/validator_tool').checkInput;
 
 const state_re = /^[a-zA-Z]{2}$/;

@@ -5,11 +5,11 @@ let express = require('express');
 let pg_tool = require('../bin/pg_tool');
 let redis_tool = require('../bin/redis_tool');
 let session_tool = require('../bin/session_tool');
-let mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
+const mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
 let checkInput = require('../bin/validator_tool').checkInput;
 
 const state_re = /^[a-zA-Z]{2}$/;
-const comment_re = /^[a-zA-Z]{2}$/;
+const comment_re = /^(\w| |-|@|!|&|\(|\)|#|_|\+|%|\^|\$|\*|'|\"|\?|\.)*$/;
 
 let router = express.Router();
 
@@ -102,7 +102,7 @@ router.post('/', function(req, res) {
           }
         }
         if (errs === 'Invalid Parameter(s): ') {
-          pg_tool.query('insert_collection', [year,month,week,state_code,county_id,trap_id,species_id,pools,individuals,trap_nights,wnv_results,comment], function(error, rows) {
+          pg_tool.query('insert_collection', [year,month,week,state,county,trap,species,pools,individuals,nights,wnv,comment], function(error, rows) {
             if (error) {
               result = {
                 "status": 500,
@@ -115,9 +115,9 @@ router.post('/', function(req, res) {
                 "status": 201,
                 "message": "Collection Successfully Submitted"
               }
+              res.send(result);
             }
           });
-          res.send(result);
         }
         else {
           result = {
@@ -138,20 +138,20 @@ router.post('/', function(req, res) {
         if (!checkInput(req.body.state,'string',state_re)) {
           result.error += 'state ';
         }
-        if (!checkInput(req.body.county,'string',county_re)) {
+        if (!checkInput(req.body.county,'number',null)) {
           result.error += 'county ';
         }
-        if (!checkInput(req.body.species,'string',species_re)) {
+        if (!checkInput(req.body.species,'number',null)) {
           result.error += 'species ';
         }
-        if (!checkInput(req.body.trap,'string',trap_re)) {
+        if (!checkInput(req.body.trap,'number',null)) {
           result.error += 'trap ';
-        }
-        if (!checkInput(req.body.wnv_results,'number',null)) {
-          result.error += 'wnv_results ';
         }
         if (!checkInput(req.body.pools,'number',null)) {
           result.error += 'pools ';
+        }
+        if (!checkInput(req.body.wnv_results,'number',null)) {
+          result.error += 'wnv_results ';
         }
         result.error = result.error.trim();
         res.send(result);

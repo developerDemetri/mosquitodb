@@ -15,9 +15,12 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.county = null;
   $scope.spec = null;
   $scope.trap = null;
+  $scope.individuals = null;
+  $scope.pools = null;
   $scope.nights = null;
   $scope.wnv_results = null;
   $scope.comment = null;
+
 
   $http.get(getServer()+'/states').then(function(response) {
     if (response.data.status === 200) {
@@ -80,9 +83,9 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   });
 
   $scope.submitData = function() {
-    if ($scope.year && $scope.state && $scope.county && $scope.spec && $scope.trap && $scope.wnv_results) {
+    if ($scope.year && $scope.state && $scope.county && $scope.spec && $scope.trap && $scope.pools && $scope.wnv_results) {
       $scope.isError = false;
-      var sumbmission = $.param({
+      var sumbmission = {
         "year": $scope.year,
         "month": $scope.month,
         "week": $scope.week,
@@ -90,23 +93,25 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         "county": $scope.county,
         "species": $scope.spec ,
         "trap": $scope.trap,
+        "pools": $scope.pools,
+        "individuals": $scope.individuals,
         "nights": $scope.nights,
         "wnv_results": $scope.wnv_results,
         "comment": $scope.comment
-      });
-      var config = {
-          headers : {
-              'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+      };
+      $.ajax({
+        type: "POST",
+        url: getServer()+'/submit',
+        data: sumbmission,
+        success: function(data) {
+          if (data.status === 201) {
+            console.log('success');
           }
-      }
-      $http.post(getServer()+'/submit', sumbmission, config)
-      .success(function (data, status, headers, config) {
-          console.log('submitted');
-          console.log(data);
-      })
-      .error(function (data, status, header, config) {
-          console.log('error!');
-          console.log(data);
+          else {
+            console.log(data);
+            $scope.isError = true;
+          }
+        }
       });
     }
     else {

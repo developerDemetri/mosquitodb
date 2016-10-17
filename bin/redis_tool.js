@@ -1,7 +1,7 @@
 'use strict';
 
 let Redis = require('ioredis');
-let redis_config = require('./secret_settings').redis_config;
+const redis_config = require('./secret_settings').redis_config;
 
 let redis_tool = new Redis({
   port: redis_config.port,
@@ -12,6 +12,5 @@ let redis_tool = new Redis({
 redis_tool.on('connect', function () {
   console.log('connected to redis');
 });
-
 
 module.exports = redis_tool;

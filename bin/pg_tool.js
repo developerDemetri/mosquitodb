@@ -7,10 +7,13 @@ pg.defaults.ssl = require('./secret_settings').pg_ssl;
 let db_pool = new pg.Pool(db_config);
 console.log("connected to database");
 
+const queries = require('./queries');
+
 let pg_tool = {};
 
-pg_tool.query = function(querystring, params, callback) {
-  if (querystring && params && callback && (typeof querystring) === 'string' && Array.isArray(params) && (typeof callback) === 'function') {
+pg_tool.query = function(query_name, params, callback) {
+  if (query_name && params && callback && (typeof query_name) === 'string' && Array.isArray(params) && (typeof callback) === 'function') {
+    let querystring = queries[query_name];
     let error = null;
     let rows = null;
     db_pool.connect(function(err, client, done) {

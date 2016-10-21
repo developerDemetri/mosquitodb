@@ -11,10 +11,10 @@
   <body ng-app="mosquitoApp" ng-controller="submitController">
     <div class="container">
       <h1 class="text-center">Submit Data</h1>
-      <div class="alert alert-warning col-md-10 col-md-offset-1 text-center" ng-show="error">
+      <div id="error-alert" class="alert alert-warning col-md-10 col-md-offset-1 text-center hidden" ng-show="error">
         {{error}}
       </div>
-      <div class="alert alert-success col-md-10 col-md-offset-1 text-center" ng-show="was_successful">
+      <div id="success-alert" class="alert alert-success col-md-10 col-md-offset-1 text-center hidden" ng-show="was_successful">
         {{success_message}}
       </div>
       <div class="manual-form">

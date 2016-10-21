@@ -24,6 +24,13 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.wnv_results = null;
   $scope.comment = null;
 
+  function unhideAlerts() {
+    $('#error-alert').removeClass('hidden');
+    $('#success-alert').removeClass('hidden');
+  }
+
+  unhideAlerts();
+
   $http.get(getServer()+'/states').then(function(response) {
     if (response.data.status === 200) {
       $('#state').selectpicker();

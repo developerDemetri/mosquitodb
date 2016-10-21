@@ -11,8 +11,11 @@
   <body ng-app="mosquitoApp" ng-controller="submitController">
     <div class="container">
       <h1 class="text-center">Submit Data</h1>
-      <div class="alert alert-warning col-md-10 col-md-offset-1 text-center" ng-show="isError">
-        Please fill out all required fields!
+      <div class="alert alert-warning col-md-10 col-md-offset-1 text-center" ng-show="error">
+        {{error}}
+      </div>
+      <div class="alert alert-success col-md-10 col-md-offset-1 text-center" ng-show="was_successful">
+        {{success_message}}
       </div>
       <div class="manual-form">
         <div class="row">

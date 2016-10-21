@@ -7,7 +7,10 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.species = [];
   $scope.traps = [];
 
-  $scope.isError = false;
+  $scope.error = null;
+  $scope.was_successful = false;
+  $scope.success_message = null;
+
   $scope.year = null;
   $scope.month = null;
   $scope.week = null;
@@ -21,7 +24,6 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.wnv_results = null;
   $scope.comment = null;
 
-
   $http.get(getServer()+'/states').then(function(response) {
     if (response.data.status === 200) {
       $('#state').selectpicker();
@@ -31,7 +33,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       }, 1);
     }
     else {
-      console.log(response);
+      console.log(response.data.error);
     }
   });
 
@@ -44,7 +46,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       }, 1);
     }
     else {
-      console.log(response);
+      console.log(response.data.error);
     }
   });
 
@@ -57,7 +59,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       }, 1);
     }
     else {
-      console.log(response);
+      console.log(response.data.error);
     }
   });
 
@@ -71,7 +73,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         }, 1);
       }
       else {
-        console.log(response);
+        console.log(response.data.error);
       }
     });
   }
@@ -83,40 +85,91 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   });
 
   $scope.submitData = function() {
-    if ($scope.year && $scope.state && $scope.county && $scope.spec && $scope.trap && $scope.pools && $scope.wnv_results) {
-      $scope.isError = false;
-      var sumbmission = {
-        "year": $scope.year,
-        "month": $scope.month,
-        "week": $scope.week,
-        "state": $scope.state,
-        "county": $scope.county,
-        "species": $scope.spec ,
-        "trap": $scope.trap,
-        "pools": $scope.pools,
-        "individuals": $scope.individuals,
-        "nights": $scope.nights,
-        "wnv_results": $scope.wnv_results,
-        "comment": $scope.comment
-      };
-      $.ajax({
-        type: "POST",
-        url: getServer()+'/submit',
-        data: sumbmission,
-        success: function(data) {
-          if (data.status === 201) {
-            console.log('success');
+    $scope.was_successful = false;
+    var state_re = /^[a-zA-Z]{2}$/;
+    var comment_re = /^(\w| |-|@|!|&|\(|\)|#|_|\+|%|\^|\$|\*|'|\"|\?|\.)*$/;
+    if (checkInput($scope.year,'number',null) && checkInput($scope.state,'string',state_re) && checkInput($scope.county,'number',null) && checkInput($scope.spec,'number',null) && checkInput($scope.trap,'number',null) && checkInput($scope.pools,'number',null) && checkInput($scope.wnv_results,'number',null)) {
+      $scope.error = null;
+      if (!$scope.comment || checkInput($scope.comment,'string',comment_re)) {
+        var sumbmission = {
+          "year": $scope.year,
+          "month": $scope.month,
+          "week": $scope.week,
+          "state": $scope.state,
+          "county": $scope.county,
+          "species": $scope.spec,
+          "trap": $scope.trap,
+          "pools": $scope.pools,
+          "individuals": $scope.individuals,
+          "nights": $scope.nights,
+          "wnv_results": $scope.wnv_results,
+          "comment": $scope.comment
+        };
+        $.ajax({
+          type: "POST",
+          url: getServer()+'/submit',
+          data: sumbmission,
+          success: function(data) {
+            if (data.status === 201) {
+              $scope.error = null;
+              $scope.success_message = data.message;
+              console.log($scope.success_message);
+              clearForm();
+            }
+            else {
+              $scope.error = data.error;
+              console.log($scope.error);
+            }
           }
-          else {
-            console.log(data);
-            $scope.isError = true;
-          }
-        }
-      });
+        });
+      }
+      else {
+        $scope.error = 'Invalid Comment!';
+      }
     }
     else {
-      $scope.isError = true;
+      $scope.error = 'Invalid Fields: ';
+      if (!checkInput($scope.year,'number',null)) {
+        $scope.error += 'Year ';
+      }
+      if (!checkInput($scope.state,'string',state_re)) {
+        $scope.error += 'State ';
+      }
+      if (!checkInput($scope.county,'number',null)) {
+        $scope.error += 'County ';
+      }
+      if (!checkInput($scope.spec,'number',null)) {
+        $scope.error += 'Species ';
+      }
+      if (!checkInput($scope.trap,'number',null)) {
+        $scope.error += 'Trap ';
+      }
+      if (!checkInput($scope.pools,'number',null)) {
+        $scope.error += 'Pools ';
+      }
+      if (!checkInput($scope.wnv_results,'number',null)) {
+        $scope.error += 'WNV_Results ';
+      }
     }
+  }
+
+  function clearForm() {
+    $scope.was_successful = true;
+    $scope.year = null;
+    $scope.month = null;
+    $scope.week = null;
+    $scope.state = null;
+    $scope.county = null;
+    $scope.spec = null;
+    $scope.trap = null;
+    $scope.individuals = null;
+    $scope.pools = null;
+    $scope.nights = null;
+    $scope.wnv_results = null;
+    $scope.comment = null;
+    $timeout(function() {
+      $('.selectpicker').selectpicker('val','');
+    }, 1);
   }
 
 });

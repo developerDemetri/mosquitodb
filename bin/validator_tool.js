@@ -1,12 +1,10 @@
 'use strict';
 
-function getServer() {
-  return location.protocol + '//' + location.hostname + ':' + location.port;
-}
+let validator_tool = {};
 
-function checkInput(input, type, regex) {
+validator_tool.checkInput = function(input, type, regex) {
   if (input) {
-    if (type === 'string') {
+    if (type === 'string' && regex) {
       if (typeof(input) === 'string' && regex.test(input)) {
         return true;
       }
@@ -20,4 +18,4 @@ function checkInput(input, type, regex) {
   return false;
 }
 
-angular.module('mosquitoApp', []);
+module.exports = validator_tool;

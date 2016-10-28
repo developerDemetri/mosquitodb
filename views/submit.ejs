@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mosquitoApp">
+  <head>
+    <%- include('header'); %>
+    <title>MosquitoDB | Submit</title>
+    <link rel="stylesheet" href="stylesheets/bootstrap-select.min.css">
+    <script type="text/javascript" src="javascripts/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="javascripts/submit.js"></script>
+  </head>
+  <%- include('navbar'); %>
+  <body ng-app="mosquitoApp" ng-controller="submitController">
+    <div class="container">
+      <h1 class="text-center">Submit Data</h1>
+      <div id="error-alert" class="alert alert-warning col-md-10 col-md-offset-1 text-center hidden" ng-show="error">
+        {{error}}
+      </div>
+      <div id="success-alert" class="alert alert-success col-md-10 col-md-offset-1 text-center hidden" ng-show="was_successful">
+        {{success_message}}
+      </div>
+      <div class="manual-form">
+        <div class="row">
+          <div class="col-md-2 col-md-offset-1">
+            <label for="year">Year*</label>
+            <input class="form-control" ng-model="year" type="number" min="1900" max="2017" placeholder="Year" required/>
+          </div>
+          <div class="col-md-2 col-md-offset-2">
+            <label for="month">Month of Year</label>
+            <input class="form-control" ng-model="month"  type="number" min="1" max="12" placeholder="Month" required/>
+          </div>
+          <div class="col-md-2 col-md-offset-2">
+            <label for="week">Week of Year</label>
+            <input class="form-control" ng-model="week" type="number" min="1" max="52" placeholder="Week" required/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-md-offset-1">
+            <label for="state">State*</label>
+            <select ng-model="state" ng-options="item.code as item.name for item in states" id="state" class="selectpicker" required>
+              <option value="">Pick One</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="county">County*</label>
+            <select ng-model="county" ng-options="item.id as item.name for item in counties" id="county" class="selectpicker" required>
+              <option value="">Pick One</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="species">Species*</label>
+            <select ng-model="spec" ng-options="item.id as item.name for item in species" id="species" class="selectpicker" required>
+              <option value="">Pick One</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-md-offset-1">
+            <label for="trap">Trap Type*</label>
+            <select id="trap" ng-model="trap" ng-options="item.id as item.name for item in traps" class="selectpicker" required>
+              <option value="">Pick One</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label for="pools">Pools*</label>
+            <input class="form-control" ng-model="pools" type="number" min="1" placeholder="# Pools"/>
+          </div>
+          <div class="col-md-2 col-md-offset-2">
+            <label for="individuals">Individuals</label>
+            <input class="form-control" ng-model="individuals" type="number" min="0" placeholder="# Individuals" required/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 col-md-offset-1">
+            <label for="nights">Trap Nights</label>
+            <input class="form-control" ng-model="nights" type="number" min="1" placeholder="# Nights"/>
+          </div>
+          <div class="col-md-2 col-md-offset-2">
+            <label for="wnv-results">WNV Results*</label>
+            <input class="form-control" ng-model="wnv_results" type="number" min="0" placeholder="# WNV" required/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <label for="comment">Comments</label>
+            <textarea ng-model="comment" class="form-control" placeholder="Additional Comments..."></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-11">
+            <button class="btn btn-success pull-right" ng-click="submitData();">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <%- include('footer'); %>
+</html>

@@ -69,10 +69,10 @@ CREATE TABLE mosquito.collection (
   county_id integer NOT NULL,
   trap_id integer,
   species_id integer NOT NULL,
-  pools integer NOT NULL,
-  individuals integer,
+  pools bigint NOT NULL,
+  individuals bigint,
   trap_nights smallint,
-  wnv_results integer NOT NULL,
+  wnv_results bigint NOT NULL,
   comment text,
   CONSTRAINT record_pkey PRIMARY KEY (id),
   CONSTRAINT collection_state_fkey FOREIGN KEY (state_code)
@@ -88,7 +88,7 @@ CREATE TABLE mosquito.collection (
 WITH (
   OIDS=FALSE
 );
-COMMENT ON TABLE mosquito.collection IS 'Mosquito population collection record, tied to the associated location and trap type.';
+COMMENT ON TABLE mosquito.collection IS 'Mosquito population collection record, tied to the associated location, species and trap type.';
 
 CREATE INDEX collection_state_index
   ON mosquito.collection

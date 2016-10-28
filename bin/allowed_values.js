@@ -1,13 +1,14 @@
 'use strict';
 
 const trap_list = {
-  'test': 'test trap',
-  'other': 'other type'
+  'Test': 'test trap',
+  'Other': 'other type'
 };
 
 const species_list = [
-  'test',
-  'other'
+  'Not Listed',
+  'Test',
+  'Other'
 ];
 
 const state_list = {

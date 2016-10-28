@@ -31,4 +31,34 @@ describe('Views', function() {
       done();
     });
   });
+  it('Should return submit page when submit route is called', function(done) {
+    request(app)
+    .get('/submit')
+    .end(function(err, res) {
+      if (err) done(err);
+      assert.isNotNull(res.body, 'got submit page');
+      expect(spy.calledWithMatch(/\/views\/submit\.ejs$/)).to.be.true;
+      done();
+    });
+  });
+  it('Should return api page when api route is called', function(done) {
+    request(app)
+    .get('/api')
+    .end(function(err, res) {
+      if (err) done(err);
+      assert.isNotNull(res.body, 'got api page');
+      expect(spy.calledWithMatch(/\/views\/api\.ejs$/)).to.be.true;
+      done();
+    });
+  });
+  it('Should return about page when about route is called', function(done) {
+    request(app)
+    .get('/about')
+    .end(function(err, res) {
+      if (err) done(err);
+      assert.isNotNull(res.body, 'got about page');
+      expect(spy.calledWithMatch(/\/views\/about\.ejs$/)).to.be.true;
+      done();
+    });
+  });
 });

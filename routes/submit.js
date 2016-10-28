@@ -59,7 +59,7 @@ router.post('/', function(req, res) {
             errs += 'week ';
           }
         }
-        let state = req.body.state + '';
+        let state = (req.body.state + '').toUpperCase();
         let county = Number(req.body.county);
         let species = Number(req.body.species);
         let trap = Number(req.body.trap);
@@ -74,6 +74,9 @@ router.post('/', function(req, res) {
             if (individuals < 0) {
               errs += 'individuals ';
             }
+          }
+          else {
+            errs += 'individuals ';
           }
         }
         let nights = null;

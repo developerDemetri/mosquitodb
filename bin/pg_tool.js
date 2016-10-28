@@ -12,34 +12,43 @@ const queries = require('./queries');
 let pg_tool = {};
 
 pg_tool.query = function(query_name, params, callback) {
+  let result;
   if (query_name && params && callback && (typeof query_name) === 'string' && Array.isArray(params) && (typeof callback) === 'function') {
     let querystring = queries[query_name];
     let error = null;
     let rows = null;
-    db_pool.connect(function(err, client, done) {
-      if (err) {
-        console.log('error connecting to database: ', err)
-        error = 'error connecting to database';
-        callback(error, rows);
-      }
-      else {
-        client.query(querystring, params, function(err, result) {
-          done();
-          if (err) {
-            error = 'error querying database',
-            callback(error, rows);
-          }
-          else {
-            rows = result.rows;
-            callback(error, rows);
-          }
-        });
-      }
-    });
+    if (querystring) {
+      db_pool.connect(function(err, client, done) {
+        if (err) {
+          console.log('error connecting to database: ', err)
+          error = 'error connecting to database';
+          callback(error, rows);
+        }
+        else {
+          client.query(querystring, params, function(err, result) {
+            done();
+            if (err) {
+              console.log('error querying database: ', err);
+              error = 'error querying database',
+              callback(error, rows);
+            }
+            else {
+              rows = result.rows;
+              callback(error, rows);
+            }
+          });
+        }
+      });
+    }
+    else {
+      console.log('query does not exist');
+      error = 'Invalid Query';
+      callback(error, rows);
+    }
   }
   else {
-    console.log("invalid usage of db tool");
-    let result = {
+    console.log('invalid usage of db tool');
+    result = {
       error: 'Invalid usage of DB_Tool',
       rows: null
     }

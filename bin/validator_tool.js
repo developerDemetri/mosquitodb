@@ -4,7 +4,7 @@ let validator_tool = {};
 
 validator_tool.checkInput = function(input, type, regex) {
   if (input) {
-    if (type === 'string') {
+    if (type === 'string' && regex) {
       if (typeof(input) === 'string' && regex.test(input)) {
         return true;
       }

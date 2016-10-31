@@ -94,7 +94,15 @@
         </div>
       </div>
       <div ng-hide="!upload" class="upload-form hidden">
-        hi
+        <div class="row">
+          <div class="col-md-5 col-md-offset-3">
+            <label class="btn btn-default btn-file"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> Select File<input id="data-upload" type="file"></label>
+            <span id="filename-label">none</span>
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-success pull-left" ng-click="submitFile();">Submit</button>
+          </div>
+        </div>
       </div>
     </div>
   </body>

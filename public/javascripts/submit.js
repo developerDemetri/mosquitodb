@@ -26,6 +26,8 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
 
   $scope.upload = false;
 
+  $scope.filename = null;
+
   $scope.toggleUpload = function() {
     $scope.upload = !$scope.upload;
     if ($scope.upload) {
@@ -39,12 +41,21 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $('#toggle-icon').addClass('fa-upload');
     }
   }
+  function setupFileUploader() {
+    $(document).on('change', ':file', function() {
+      var input = $(this), numFiles = input.get(0).files ? input.get(0).files.length : 1;
+      $scope.filename = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      $('#filename-label').html($scope.filename);
+    });
+  }
+
 
   function unhideElements() {
     $('.manual-form').removeClass('hidden');
     $('.upload-form').removeClass('hidden');
     $('#error-alert').removeClass('hidden');
     $('#success-alert').removeClass('hidden');
+    setupFileUploader();
   }
 
   unhideElements();
@@ -195,6 +206,10 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     $timeout(function() {
       $('.selectpicker').selectpicker('val','');
     }, 1);
+  }
+
+  $scope.submitFile = function() {
+    console.log('sending file');
   }
 
 });

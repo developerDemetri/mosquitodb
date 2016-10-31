@@ -7,6 +7,7 @@ let bodyParser = require('body-parser');
 let pg_tool = require('./bin/pg_tool');
 let redis_tool = require('./bin/redis_tool');
 let session_tool = require('./bin/session_tool');
+let fileUpload = require('express-fileupload');
 
 let index = require('./routes/index');
 let submit = require('./routes/submit');
@@ -32,5 +33,7 @@ app.set('view engine', 'ejs');
 app.use(function(req, res) {
   res.render('lost');
 });
+
+app.use(fileUpload());
 
 module.exports = app;

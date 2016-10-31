@@ -7,9 +7,11 @@ let redis_tool = require('../bin/redis_tool');
 let session_tool = require('../bin/session_tool');
 const mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
 let checkInput = require('../bin/validator_tool').checkInput;
+let fileUpload = require('express-fileupload');
 
 const state_re = /^[a-zA-Z]{2}$/;
 const comment_re = /^(\w| |-|@|!|&|\(|\)|#|_|\+|%|\^|\$|\*|'|\"|\?|\.)*$/;
+const file_re = /^\w(\w|-|\.| ){0,250}\.csv$/;
 
 let router = express.Router();
 
@@ -111,14 +113,14 @@ router.post('/', function(req, res) {
                 "status": 500,
                 "error": 'Server Error'
               };
-              res.send(result);
+              res.status(result.status).send(result);
             }
             else {
               result = {
                 "status": 201,
                 "message": "Collection Successfully Submitted"
               }
-              res.send(result);
+              res.status(result.status).send(result);
             }
           });
         }
@@ -127,7 +129,7 @@ router.post('/', function(req, res) {
             "status": 400,
             "error": errs.trim()
           }
-          res.send(result);
+          res.status(result.status).send(result);
         }
       }
       else {
@@ -157,7 +159,7 @@ router.post('/', function(req, res) {
           result.error += 'wnv_results ';
         }
         result.error = result.error.trim();
-        res.send(result);
+        res.status(result.status).send(result);
       }
     }
     else {
@@ -165,7 +167,7 @@ router.post('/', function(req, res) {
         "status": 401,
         "error": "Unauthorized Request"
       }
-      res.send(result);
+      res.status(result.status).send(result);
     }
   }
   catch (error) {
@@ -173,9 +175,56 @@ router.post('/', function(req, res) {
     result = {
       "status": 500,
       "error": "Server Error"
-    }
-    res.send(result);
+    };
+    res.status(result.status).send(result);
   }
+});
+
+router.post('/upload', function(req, res) {
+    let result;
+    try {
+      if (req.session.mdb_key === mdb_key) {
+        console.log(req);
+        if (req.files && req.files.mosquitoFile) {
+          let sampleFile = req.files.mosquitoFile;
+          // sampleFile.mv('/somewhere/on/your/server/filename.jpg', function(err) {
+          //     if (err) {
+          //         res.status(500).send(err);
+          //     }
+          //     else {
+          //         res.send('File uploaded!');
+          //     }
+          // });
+          result = {
+            "status": 202,
+            "message": "File Successfully Submitted"
+          };
+          res.status(result.status).send(result);
+        }
+        else {
+          result = {
+            "status": 400,
+            "error": "Missing Files"
+          };
+          res.status(result.status).send(result);
+        }
+      }
+      else {
+        result = {
+          "status": 401,
+          "error": "Unauthorized Request"
+        }
+        res.status(result.status).send(result);
+      }
+    }
+    catch (error) {
+      console.log(error);
+      result = {
+        "status": 500,
+        "error": "Server Error"
+      };
+      res.status(result.status).send(result);
+    }
 });
 
 module.exports = router;

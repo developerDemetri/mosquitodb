@@ -12,13 +12,13 @@
     <div class="container">
       <div class="row">
         <h1 class="text-center col-md-10 col-md-offset-1">Submit Data</h1>
-        <p class="text-center col-md-1"><button class="btn btn-info btn-sm" id="submission-type" ng-click="toggleUpload();"><span id="toggle-label">Upload File</span> <i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i></button></p>
+        <p class="text-center col-md-1"><button class="btn btn-info btn-sm" id="submission-type" ng-click="toggleUpload();"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> <span id="toggle-label">Upload File</span></button></p>
       </div>
       <div id="error-alert" class="alert alert-warning col-md-10 col-md-offset-1 text-center hidden" ng-show="error">
-        {{error}}
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{error}}
       </div>
       <div id="success-alert" class="alert alert-success col-md-10 col-md-offset-1 text-center hidden" ng-show="was_successful">
-        {{success_message}}
+        <i class="fa fa-check-circle-o" aria-hidden="true"></i> {{success_message}}
       </div>
       <div ng-hide="upload" class="manual-form hidden">
         <div class="row">
@@ -89,7 +89,7 @@
         </div>
         <div class="row">
           <div class="col-md-11">
-            <button class="btn btn-success pull-right" ng-click="submitData();">Submit</button>
+            <button class="btn btn-success pull-right" ng-click="submitData();">Submit Form</button>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@
             <span id="filename-label">none</span>
           </div>
           <div class="col-md-4">
-            <button class="btn btn-success pull-left" ng-click="submitFile();">Submit</button>
+            <button class="btn btn-success pull-left" ng-click="submitFile();">Submit File</button>
           </div>
         </div>
       </div>

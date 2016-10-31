@@ -25,11 +25,13 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.comment = null;
 
   $scope.upload = false;
-
+  $scope.fileToSend = null;
   $scope.filename = null;
 
   $scope.toggleUpload = function() {
     $scope.upload = !$scope.upload;
+    $scope.error = null;
+    $scope.was_successful = false;
     if ($scope.upload) {
       $('#toggle-label').html('Manual Form');
       $('#toggle-icon').removeClass('fa-upload');
@@ -41,14 +43,18 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $('#toggle-icon').addClass('fa-upload');
     }
   }
+
   function setupFileUploader() {
     $(document).on('change', ':file', function() {
       var input = $(this), numFiles = input.get(0).files ? input.get(0).files.length : 1;
       $scope.filename = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      if (!$scope.filename) {
+        $scope.filename = 'none';
+      }
       $('#filename-label').html($scope.filename);
+      $scope.fileToSend = $('#data-upload').val();
     });
   }
-
 
   function unhideElements() {
     $('.manual-form').removeClass('hidden');
@@ -160,7 +166,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         });
       }
       else {
-        $scope.error = 'Invalid Comment!';
+        $scope.error = 'Invalid Comment';
       }
     }
     else {
@@ -209,7 +215,25 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   }
 
   $scope.submitFile = function() {
-    console.log('sending file');
+    $scope.was_successful = false;
+    var file_re = /^\w(\w|-|\.| ){0,250}\.csv$/;
+    if ($scope.fileToSend) {
+      if (file_re.test($scope.filename.trim())) {
+        $scope.error = null;
+        console.log('sending file...');
+        $scope.was_successful = true;
+        $scope.success_message = 'File Upload Successful';
+        $scope.fileToSend = null;
+        $scope.filename = 'none';
+        $('#filename-label').html($scope.filename);
+      }
+      else {
+        $scope.error = 'Invalid File Name';
+      }
+    }
+    else {
+      $scope.error = 'Please Select a File';
+    }
   }
 
 });

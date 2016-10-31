@@ -8,16 +8,19 @@
     <script type="text/javascript" src="javascripts/submit.js"></script>
   </head>
   <%- include('navbar'); %>
-  <body ng-app="mosquitoApp" ng-controller="submitController">
+  <body ng-app="mosquitoApp" ng-controller="submitController" ng-cloak>
     <div class="container">
-      <h1 class="text-center">Submit Data</h1>
+      <div class="row">
+        <h1 class="text-center col-md-10 col-md-offset-1">Submit Data</h1>
+        <p class="text-center col-md-1"><button class="btn btn-info btn-sm" id="submission-type" ng-click="toggleUpload();"><span id="toggle-label">Upload File</span> <i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i></button></p>
+      </div>
       <div id="error-alert" class="alert alert-warning col-md-10 col-md-offset-1 text-center hidden" ng-show="error">
         {{error}}
       </div>
       <div id="success-alert" class="alert alert-success col-md-10 col-md-offset-1 text-center hidden" ng-show="was_successful">
         {{success_message}}
       </div>
-      <div class="manual-form">
+      <div ng-hide="upload" class="manual-form hidden">
         <div class="row">
           <div class="col-md-2 col-md-offset-1">
             <label for="year">Year*</label>
@@ -89,6 +92,9 @@
             <button class="btn btn-success pull-right" ng-click="submitData();">Submit</button>
           </div>
         </div>
+      </div>
+      <div ng-hide="!upload" class="upload-form hidden">
+        hi
       </div>
     </div>
   </body>

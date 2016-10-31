@@ -24,12 +24,30 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.wnv_results = null;
   $scope.comment = null;
 
-  function unhideAlerts() {
+  $scope.upload = false;
+
+  $scope.toggleUpload = function() {
+    $scope.upload = !$scope.upload;
+    if ($scope.upload) {
+      $('#toggle-label').html('Manual Form');
+      $('#toggle-icon').removeClass('fa-upload');
+      $('#toggle-icon').addClass('fa-keyboard-o');
+    }
+    else {
+      $('#toggle-label').html('Upload File');
+      $('#toggle-icon').removeClass('fa-keyboard-o');
+      $('#toggle-icon').addClass('fa-upload');
+    }
+  }
+
+  function unhideElements() {
+    $('.manual-form').removeClass('hidden');
+    $('.upload-form').removeClass('hidden');
     $('#error-alert').removeClass('hidden');
     $('#success-alert').removeClass('hidden');
   }
 
-  unhideAlerts();
+  unhideElements();
 
   $http.get(getServer()+'/states').then(function(response) {
     if (response.data.status === 200) {

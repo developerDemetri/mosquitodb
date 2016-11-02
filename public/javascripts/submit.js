@@ -44,18 +44,6 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     }
   }
 
-  function setupFileUploader() {
-    $(document).on('change', ':file', function() {
-      var input = $(this), numFiles = input.get(0).files ? input.get(0).files.length : 1;
-      $scope.filename = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-      if (!$scope.filename) {
-        $scope.filename = 'none';
-      }
-      $('#filename-label').html($scope.filename);
-      $scope.fileToSend = $('#data-upload').val();
-    });
-  }
-
   function unhideElements() {
     $('.manual-form').removeClass('hidden');
     $('.upload-form').removeClass('hidden');
@@ -214,6 +202,19 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     }, 1);
   }
 
+  function setupFileUploader() {
+    $(document).on('change', ':file', function() {
+      var input = $(this), numFiles = input.get(0).files ? input.get(0).files.length : 1;
+      $scope.filename = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      if (!$scope.filename) {
+        $scope.filename = 'none';
+      }
+      $('#filename-label').html($scope.filename);
+      $scope.fileToSend = input.get(0).files[0];
+      console.log($scope.fileToSend)
+    });
+  }
+
   $scope.submitFile = function() {
     $scope.was_successful = false;
     var file_re = /^\w(\w|-|\.| ){0,250}\.csv$/;
@@ -221,11 +222,31 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       if (file_re.test($scope.filename.trim())) {
         $scope.error = null;
         console.log('sending file...');
-        $scope.was_successful = true;
-        $scope.success_message = 'File Upload Successful';
-        $scope.fileToSend = null;
-        $scope.filename = 'none';
-        $('#filename-label').html($scope.filename);
+        var formData = new FormData();
+        formData.append('mosquitoFile', $scope.fileToSend);
+        $.ajax({
+            url: getServer()+'/submit/upload',
+            data: formData,
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            success: function(data) {
+              console.log(data)
+              if (data.status === 202) {
+                $scope.error = null;
+                $scope.was_successful = true;
+                $scope.success_message = data.message;
+                console.log($scope.success_message);
+                $scope.fileToSend = null;
+                $scope.filename = 'none';
+                $('#filename-label').html($scope.filename);
+              }
+              else {
+                $scope.error = data.error;
+                console.log($scope.error);
+              }
+            }
+        });
       }
       else {
         $scope.error = 'Invalid File Name';

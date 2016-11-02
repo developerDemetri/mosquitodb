@@ -7,7 +7,10 @@ let redis_tool = require('../bin/redis_tool');
 let session_tool = require('../bin/session_tool');
 const mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
 let checkInput = require('../bin/validator_tool').checkInput;
-let fileUpload = require('express-fileupload');
+let multer  = require('multer');
+let upload = multer({ dest: 'uploads/' });
+let fs = require('fs');
+let csv = require('csv-parse');
 
 const state_re = /^[a-zA-Z]{2}$/;
 const comment_re = /^(\w| |-|@|!|&|\(|\)|#|_|\+|%|\^|\$|\*|'|\"|\?|\.)*$/;
@@ -180,51 +183,56 @@ router.post('/', function(req, res) {
   }
 });
 
-router.post('/upload', function(req, res) {
-    let result;
-    try {
-      if (req.session.mdb_key === mdb_key) {
-        console.log(req);
-        if (req.files && req.files.mosquitoFile) {
-          let sampleFile = req.files.mosquitoFile;
-          // sampleFile.mv('/somewhere/on/your/server/filename.jpg', function(err) {
-          //     if (err) {
-          //         res.status(500).send(err);
-          //     }
-          //     else {
-          //         res.send('File uploaded!');
-          //     }
-          // });
-          result = {
-            "status": 202,
-            "message": "File Successfully Submitted"
-          };
-          res.status(result.status).send(result);
-        }
-        else {
-          result = {
-            "status": 400,
-            "error": "Missing Files"
-          };
-          res.status(result.status).send(result);
-        }
+router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
+  let result;
+  try {
+    if (req.session.mdb_key === mdb_key) {
+      if (req.file) {
+        fs.createReadStream(req.file.path).pipe(csv()).on('data', function(line) {
+          if (line) {
+            let items = "Row: ";
+            line.forEach(function(item) {
+              items+=item;
+            })
+            console.log(items);
+          }
+        });
+        fs.unlink(req.file.path, function(err) {
+          console.log(err);
+        });
+        result = {
+          "status": 202,
+          "message": "File Successfully Submitted"
+        };
+        res.status(result.status).send(result);
       }
       else {
         result = {
-          "status": 401,
-          "error": "Unauthorized Request"
-        }
+          "status": 400,
+          "error": "Missing File"
+        };
         res.status(result.status).send(result);
       }
     }
-    catch (error) {
-      console.log(error);
+    else {
+      fs.unlink(req.file.path, function(err) {
+        console.log(err);
+      });
       result = {
-        "status": 500,
-        "error": "Server Error"
-      };
+        "status": 401,
+        "error": "Unauthorized Request"
+      }
       res.status(result.status).send(result);
     }
+  }
+  catch (error) {
+    console.log(error);
+    result = {
+      "status": 500,
+      "error": "Server Error"
+    };
+    res.status(result.status).send(result);
+  }
 });
 
 module.exports = router;

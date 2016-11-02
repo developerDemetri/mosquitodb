@@ -45,3 +45,4 @@ bin/local_settings.js
 
 #redis crap
 *dump.rdb
+uploads/*

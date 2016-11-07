@@ -24,12 +24,36 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.wnv_results = null;
   $scope.comment = null;
 
-  function unhideAlerts() {
-    $('#error-alert').removeClass('hidden');
-    $('#success-alert').removeClass('hidden');
+  $scope.upload = false;
+  $scope.fileToSend = null;
+  $scope.filename = null;
+  $scope.file_errors = [];
+
+  $scope.toggleUpload = function() {
+    $scope.upload = !$scope.upload;
+    $scope.error = null;
+    $scope.was_successful = false;
+    if ($scope.upload) {
+      $('#toggle-label').html('Manual Form');
+      $('#toggle-icon').removeClass('fa-upload');
+      $('#toggle-icon').addClass('fa-keyboard-o');
+    }
+    else {
+      $('#toggle-label').html('Upload File');
+      $('#toggle-icon').removeClass('fa-keyboard-o');
+      $('#toggle-icon').addClass('fa-upload');
+    }
   }
 
-  unhideAlerts();
+  function unhideElements() {
+    $('.manual-form').removeClass('hidden');
+    $('.upload-form').removeClass('hidden');
+    $('#error-alert').removeClass('hidden');
+    $('#success-alert').removeClass('hidden');
+    setupFileUploader();
+  }
+
+  unhideElements();
 
   $http.get(getServer()+'/states').then(function(response) {
     if (response.data.status === 200) {
@@ -131,7 +155,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         });
       }
       else {
-        $scope.error = 'Invalid Comment!';
+        $scope.error = 'Invalid Comment';
       }
     }
     else {
@@ -177,6 +201,59 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     $timeout(function() {
       $('.selectpicker').selectpicker('val','');
     }, 1);
+  }
+
+  function setupFileUploader() {
+    $(document).on('change', ':file', function() {
+      var input = $(this), numFiles = input.get(0).files ? input.get(0).files.length : 1;
+      $scope.filename = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      if (!$scope.filename) {
+        $scope.filename = 'none';
+      }
+      $('#filename-label').html($scope.filename);
+      $scope.fileToSend = input.get(0).files[0];
+    });
+  }
+
+  $scope.submitFile = function() {
+    $scope.was_successful = false;
+    var file_re = /^\w(\w|-|\.| ){0,250}\.csv$/;
+    if ($scope.fileToSend) {
+      $scope.file_errors = [];
+      if (file_re.test($scope.filename.trim())) {
+        $scope.error = null;
+        var formData = new FormData();
+        formData.append('mosquitoFile', $scope.fileToSend);
+        $.ajax({
+            url: getServer()+'/submit/upload',
+            data: formData,
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            success: function(data) {
+              if (data.status === 202) {
+                $('#upload_results').removeClass('hidden');
+                $scope.error = null;
+                $scope.fileToSend = null;
+                $scope.filename = 'none';
+                $('#filename-label').html($scope.filename);
+                $scope.file_errors = data.errors;
+                $scope.$apply();
+              }
+              else {
+                $scope.error = data.error;
+                console.log($scope.error);
+              }
+            }
+        });
+      }
+      else {
+        $scope.error = 'Invalid File Name';
+      }
+    }
+    else {
+      $scope.error = 'Please Select a File';
+    }
   }
 
 });

@@ -55,14 +55,14 @@ router.get('/states', function(req, res) {
             "status": 500,
             "error": 'Server Error'
           };
-          res.send(result);
+          res.status(result.status).send(result);
         }
         else {
           result = {
             "status": 200,
             "states": rows
           };
-          res.send(result);
+          res.status(result.status).send(result);
         }
       });
     }
@@ -71,7 +71,7 @@ router.get('/states', function(req, res) {
         "status": 401,
         "error": 'Unauthorized Request'
       };
-      res.send(result);
+      res.status(result.status).send(result);
     }
   }
   catch (error) {
@@ -80,7 +80,7 @@ router.get('/states', function(req, res) {
       "status": 500,
       "error": "Server Error"
     }
-    res.send(result);
+    res.status(result.status).send(result);
   }
 });
 
@@ -97,14 +97,14 @@ router.get('/counties/:state', function(req, res) {
               "status": 500,
               "error": 'Server Error'
             };
-            res.send(result);
+            res.status(result.status).send(result);
           }
           else {
             result = {
               "status": 200,
               "counties": rows
             };
-            res.send(result);
+            res.status(result.status).send(result);
           }
         });
       }
@@ -113,7 +113,7 @@ router.get('/counties/:state', function(req, res) {
           "status": 400,
           "error": 'Invalid State Code'
         };
-        res.send(result);
+        res.status(result.status).send(result);
       }
     }
     else {
@@ -121,7 +121,7 @@ router.get('/counties/:state', function(req, res) {
         "status": 401,
         "error": 'Unauthorized Request'
       };
-      res.send(result);
+      res.status(result.status).send(result);
     }
   }
   catch (error) {
@@ -130,7 +130,7 @@ router.get('/counties/:state', function(req, res) {
       "status": 500,
       "error": "Server Error"
     }
-    res.send(result);
+    res.status(result.status).send(result);
   }
 });
 
@@ -144,14 +144,14 @@ router.get('/species', function(req, res) {
             "status": 500,
             "error": 'Server Error'
           };
-          res.send(result);
+          res.status(result.status).send(result);
         }
         else {
           result = {
             "status": 200,
             "species": rows
           };
-          res.send(result);
+          res.status(result.status).send(result);
         }
       });
     }
@@ -160,7 +160,7 @@ router.get('/species', function(req, res) {
         "status": 401,
         "error": 'Unauthorized Request'
       };
-      res.send(result);
+      res.status(result.status).send(result);
     }
   }
   catch (error) {
@@ -169,7 +169,7 @@ router.get('/species', function(req, res) {
       "status": 500,
       "error": "Server Error"
     }
-    res.send(result);
+    res.status(result.status).send(result);
   }
 });
 
@@ -183,14 +183,14 @@ router.get('/traps', function(req, res) {
             "status": 500,
             "error": 'Server Error'
           };
-          res.send(result);
+          res.status(result.status).send(result);
         }
         else {
           result = {
             "status": 200,
             "traps": rows
           };
-          res.send(result);
+          res.status(result.status).send(result);
         }
       });
     }
@@ -199,7 +199,7 @@ router.get('/traps', function(req, res) {
         "status": 401,
         "error": 'Unauthorized Request'
       };
-      res.send(result);
+      res.status(result.status).send(result);
     }
   }
   catch (error) {
@@ -208,7 +208,7 @@ router.get('/traps', function(req, res) {
       "status": 500,
       "error": "Server Error"
     }
-    res.send(result);
+    res.status(result.status).send(result);
   }
 });
 

@@ -6,13 +6,24 @@ let request = require('supertest');
 let assert = require('chai').assert;
 
 describe('Should not allow cross-site submissions', function() {
-  it('Should not allow submission', function(done) {
+  it('Should not allow manual submission', function(done) {
     request(app)
     .post('/submit')
     .end(function(err, res) {
       if (err) done(err);
       assert.equal(res.body.error, 'Unauthorized Request');
       assert.equal(res.body.status, 401, "denies submission");
+      done();
+    });
+  });
+  it('Should not allow upload submission', function(done) {
+    let path = __dirname+'/test-submission.csv';
+    request(app).post('/submit/upload')
+    .attach('mosquitoFile', path)
+    .end(function(err, res) {
+      if (err) throw err;
+      assert.equal(res.body.status, 401, "Should deny csv file");
+      assert.equal(res.body.error, 'Unauthorized Request');
       done();
     });
   });
@@ -307,6 +318,54 @@ describe('Submitting Manual Form', function() {
       if (err) done(err);
       assert.equal(res.body.message, 'Collection Successfully Submitted');
       assert.equal(res.body.status, 201, "should require valid comment");
+      done();
+    });
+  });
+});
+
+describe('Submitting CSV File', function() {
+  let cookies;
+  it('Setting up cookies', function(done) {
+    request(app)
+      .get('/')
+      .end(function(err, res) {
+        if (err) done(err);
+        cookies = res.headers['set-cookie'].pop().split(';')[0];
+        done();
+      });
+  });
+  it('Should require a file', function(done) {
+    let req = request(app).post('/submit/upload');
+    req.cookies = cookies;
+    req.end(function(err, res) {
+      if (err) throw err;
+      assert.equal(res.body.status, 400, "Should require csv file");
+      assert.equal(res.body.error, "Missing File");
+      done();
+    });
+  });
+  it('Should require a CSV file', function(done) {
+    let req = request(app).post('/submit/upload');
+    req.cookies = cookies;
+    let path = __dirname+'/bad-submission.txt';
+    req.attach('mosquitoFile', path)
+    .end(function(err, res) {
+      if (err) throw err;
+      assert.equal(res.body.status, 400, "Should require csv file");
+      assert.equal(res.body.error, "Invalid File");
+      done();
+    });
+  });
+  it('Partially correct CSV file should have some errors', function(done) {
+    let req = request(app).post('/submit/upload');
+    req.cookies = cookies;
+    let path = __dirname+'/test-submission.csv';
+    req.attach('mosquitoFile', path)
+    .end(function(err, res) {
+      if (err) throw err;
+      assert.equal(res.body.status, 202, "Should accept valid csv file");
+      assert.isNotNull(res.body.errors, "Some errors were found in csv file");
+      assert.equal(res.body.errors.length, 3, "Exactly 3 errors in csv file");
       done();
     });
   });

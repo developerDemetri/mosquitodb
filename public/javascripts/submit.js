@@ -27,6 +27,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.upload = false;
   $scope.fileToSend = null;
   $scope.filename = null;
+  $scope.file_errors = [];
 
   $scope.toggleUpload = function() {
     $scope.upload = !$scope.upload;
@@ -211,7 +212,6 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       }
       $('#filename-label').html($scope.filename);
       $scope.fileToSend = input.get(0).files[0];
-      console.log($scope.fileToSend)
     });
   }
 
@@ -219,9 +219,9 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     $scope.was_successful = false;
     var file_re = /^\w(\w|-|\.| ){0,250}\.csv$/;
     if ($scope.fileToSend) {
+      $scope.file_errors = [];
       if (file_re.test($scope.filename.trim())) {
         $scope.error = null;
-        console.log('sending file...');
         var formData = new FormData();
         formData.append('mosquitoFile', $scope.fileToSend);
         $.ajax({
@@ -231,15 +231,14 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
             contentType: false,
             processData: false,
             success: function(data) {
-              console.log(data)
               if (data.status === 202) {
+                $('#upload_results').removeClass('hidden');
                 $scope.error = null;
-                $scope.was_successful = true;
-                $scope.success_message = data.message;
-                console.log($scope.success_message);
                 $scope.fileToSend = null;
                 $scope.filename = 'none';
                 $('#filename-label').html($scope.filename);
+                $scope.file_errors = data.errors;
+                $scope.$apply();
               }
               else {
                 $scope.error = data.error;

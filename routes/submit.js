@@ -322,7 +322,9 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
               errors.push(errs[i]);
             }
             fs.unlink(req.file.path, function(err) {
-              console.log(err);
+              if (err) {
+                console.log("Error Deleting File: ",err);
+              }
             });
             result = {
               "status": 202,
@@ -372,7 +374,7 @@ function processSubmissions(submissions, callback) {
             console.log('CSV Insertion Error: ',error);
             let err = {
               "line": submission.line,
-              "error": 'Insertion Error'
+              "error": 'Database Error'
             };
             errors.push(err);
           }
@@ -383,7 +385,7 @@ function processSubmissions(submissions, callback) {
         console.log('CSV Insertion Error: ',error);
         let err = {
           "line": submission.line,
-          "error": 'Insertion Error'
+          "error": 'Database Error'
         };
         errors.push(err);
         next();

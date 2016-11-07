@@ -103,6 +103,12 @@
             <button class="btn btn-success pull-left" ng-click="submitFile();">Submit File</button>
           </div>
         </div>
+        <div id="upload_results" class="row hidden">
+          <h3 class="text-center">File Errors:</h3>
+          <div ng-cloak class="col-md-6 col-md-offset-3" ng-repeat="error in file_errors">
+            <p class="text-danger">Error on Line {{error.line}} : {{error.error}}</p>
+          </div>
+        </div>
       </div>
     </div>
   </body>

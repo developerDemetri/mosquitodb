@@ -8,7 +8,12 @@ let session_tool = require('../bin/session_tool');
 const mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
 let checkInput = require('../bin/validator_tool').checkInput;
 let multer  = require('multer');
-let upload = multer({ dest: 'uploads/' });
+let upload = multer({
+  dest: 'uploads/',
+  limits: {
+    fileSize: 1000000 //1MB
+  }
+});
 let fs = require('fs');
 let csv = require('csv-parse');
 let async_loop = require('node-async-loop');
@@ -190,150 +195,159 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
   try {
     if (req.session.mdb_key === mdb_key) {
       if (req.file) {
-        let submissions = [];
-        let errors = [];
-        let line_num = 0;
-        fs.createReadStream(req.file.path).pipe(csv())
-        .on('data', function(line) {
-          if (line && line[0] != 'year') {
-            line_num++;
-            try {
-              let line_error = base_error;
-              let submission = {
-                "line": line_num,
-                "year": null,
-                "month": null,
-                "week": null,
-                "state": null,
-                "county": null,
-                "species": null,
-                "trap": null,
-                "pools": null,
-                "individuals": null,
-                "nights": null,
-                "wnv": null,
-                "comment": null
-              };
-              if (checkInput(line[0],'number',null)) {
-                submission.year = Number(line[0]);
-              }
-              else {
-                line_error += "year ";
-              }
-              if (line[1]) {
-                if (checkInput(line[1],'number',null)) {
-                  submission.month = Number(line[1]);
+        if (file_re.test(req.file.originalname)) {
+          let submissions = [];
+          let errors = [];
+          let line_num = 0;
+          fs.createReadStream(req.file.path).pipe(csv())
+          .on('data', function(line) {
+            if (line && line[0] != 'year') {
+              line_num++;
+              try {
+                let line_error = base_error;
+                let submission = {
+                  "line": line_num,
+                  "year": null,
+                  "month": null,
+                  "week": null,
+                  "state": null,
+                  "county": null,
+                  "species": null,
+                  "trap": null,
+                  "pools": null,
+                  "individuals": null,
+                  "nights": null,
+                  "wnv": null,
+                  "comment": null
+                };
+                if (checkInput(line[0],'number',null)) {
+                  submission.year = Number(line[0]);
                 }
                 else {
-                  line_error += "month ";
+                  line_error += "year ";
                 }
-              }
-              if (line[2]) {
-                if (checkInput(line[2],'number',null)) {
-                  submission.week = Number(line[2]);
+                if (line[1]) {
+                  if (checkInput(line[1],'number',null)) {
+                    submission.month = Number(line[1]);
+                  }
+                  else {
+                    line_error += "month ";
+                  }
                 }
-                else {
-                  line_error += "week ";
+                if (line[2]) {
+                  if (checkInput(line[2],'number',null)) {
+                    submission.week = Number(line[2]);
+                  }
+                  else {
+                    line_error += "week ";
+                  }
                 }
-              }
-              if (checkInput(line[3].trim(),'string',state_re)) {
-                submission.state = (line[3].trim() + "").toUpperCase();
-              }
-              else {
-                line_error += "state ";
-              }
-              if (checkInput(line[4],'number',null)) {
-                submission.county = Number(line[4]);
-              }
-              else {
-                line_error += "county ";
-              }
-              if (checkInput(line[5],'number',null)) {
-                submission.species = Number(line[5]);
-              }
-              else {
-                line_error += "species ";
-              }
-              if (checkInput(line[6],'number',null)) {
-                submission.trap = Number(line[6]);
-              }
-              else {
-                line_error += "trap ";
-              }
-              if (checkInput(line[7],'number',null)) {
-                submission.pools = Number(line[7]);
-              }
-              else {
-                line_error += "pools ";
-              }
-              if (line[8]) {
-                if (checkInput(line[8],'number',null)) {
-                  submission.individuals = Number(line[8]);
+                if (checkInput(line[3].trim(),'string',state_re)) {
+                  submission.state = (line[3].trim() + "").toUpperCase();
                 }
                 else {
-                  line_error += "individuals ";
+                  line_error += "state ";
                 }
-              }
-              if (line[9]) {
-                if (checkInput(line[9],'number',null)) {
-                  submission.nights = Number(line[9]);
+                if (checkInput(line[4],'number',null)) {
+                  submission.county = Number(line[4]);
                 }
                 else {
-                  line_error += "nights ";
+                  line_error += "county ";
                 }
-              }
-              if (checkInput(line[10],'number',null)) {
-                submission.wnv = Number(line[10]);
-              }
-              else {
-                line_error += "wnv ";
-              }
-              if (line[11]) {
-                if (checkInput(line[11],'string',comment_re)) {
-                  submission.comment = line[11].trim() + "";
+                if (checkInput(line[5],'number',null)) {
+                  submission.species = Number(line[5]);
                 }
                 else {
-                  line_error += "comment ";
+                  line_error += "species ";
+                }
+                if (checkInput(line[6],'number',null)) {
+                  submission.trap = Number(line[6]);
+                }
+                else {
+                  line_error += "trap ";
+                }
+                if (checkInput(line[7],'number',null)) {
+                  submission.pools = Number(line[7]);
+                }
+                else {
+                  line_error += "pools ";
+                }
+                if (line[8]) {
+                  if (checkInput(line[8],'number',null)) {
+                    submission.individuals = Number(line[8]);
+                  }
+                  else {
+                    line_error += "individuals ";
+                  }
+                }
+                if (line[9]) {
+                  if (checkInput(line[9],'number',null)) {
+                    submission.nights = Number(line[9]);
+                  }
+                  else {
+                    line_error += "nights ";
+                  }
+                }
+                if (checkInput(line[10],'number',null)) {
+                  submission.wnv = Number(line[10]);
+                }
+                else {
+                  line_error += "wnv ";
+                }
+                if (line[11]) {
+                  if (checkInput(line[11],'string',comment_re)) {
+                    submission.comment = line[11].trim() + "";
+                  }
+                  else {
+                    line_error += "comment ";
+                  }
+                }
+                if (line_error === base_error) {
+                  submissions.push(submission);
+                }
+                else {
+                  errors.push({
+                    line: line_num,
+                    error: line_error
+                  });
                 }
               }
-              if (line_error === base_error) {
-                submissions.push(submission);
-              }
-              else {
+              catch (err) {
+                console.log(err);
                 errors.push({
                   line: line_num,
-                  error: line_error
+                  error: 'Error Parsing Line'
                 });
               }
             }
-            catch (err) {
-              console.log(err);
-              errors.push({
-                line: line_num,
-                error: 'Error Parsing Line'
-              });
-            }
-          }
-        })
-        .on('end',function() {
-          console.log('done reading csv');
-          processSubmissions(submissions, function(errs) {
-            for (let i = 0; i < errs.length; i++) {
-              errors.push(errs[i]);
-            }
-            fs.unlink(req.file.path, function(err) {
-              if (err) {
-                console.log("Error Deleting File: ",err);
+          })
+          .on('end',function() {
+            console.log('done reading csv');
+            processSubmissions(submissions, function(errs) {
+              for (let i = 0; i < errs.length; i++) {
+                errors.push(errs[i]);
               }
+              fs.unlink(req.file.path, function(err) {
+                if (err) {
+                  console.log("Error Deleting File: ",err);
+                }
+              });
+              result = {
+                "status": 202,
+                "message": "File Successfully Submitted",
+                "errors": errors
+              };
+              res.status(result.status).send(result);
             });
-            result = {
-              "status": 202,
-              "message": "File Successfully Submitted",
-              "errors": errors
-            };
-            res.status(result.status).send(result);
           });
-        });
+        }
+        else {
+          result = {
+            "status": 400,
+            "error": "Invalid File"
+          };
+          res.status(result.status).send(result);
+        }
       }
       else {
         result = {

@@ -20,17 +20,19 @@ let captcha_secret;
 
 if (process.env.im_live) {
   console.log('loading prod settings..');
-  pg_user = process.env.pg_user;
-  pg_db = process.env.pg_db;
-  pg_pass = process.env.pg_pass;
-  pg_host = process.env.pg_host;
-  pg_port = process.env.pg_port;
+  let pg_url = process.env.DATABASE_URL.split(':');
+  pg_user = pg_url[1].substring(2);
+  pg_db = pg_url[3].split('/')[1];
+  pg_pass = pg_url[2].split('@')[0];
+  pg_host = pg_url[2].split('@')[1];
+  pg_port = pg_url[3].split('/')[0];
   sesh_name = process.env.sesh_name;
   sesh_secret = process.env.sesh_secret;
-  pg_ssl = process.env.pg_ssl;
-  redis_port = process.env.redis_port;
-  redis_host = process.env.redis_host;
-  redis_password = process.env.redis_password;
+  pg_ssl = true;
+  let redis_url = process.env.REDIS_URL.split(':');
+  redis_port = redis_url[3];
+  redis_host = redis_url[2].split('@')[1];
+  redis_password = redis_url[2].split('@')[0];
   mdb_api_key = process.env.mdb_api_key;
   captcha_secret = process.env.captcha_secret;
 }
@@ -44,7 +46,7 @@ else {
   pg_port = local_settings.pg_port;
   sesh_name = local_settings.sesh_name;
   sesh_secret = local_settings.sesh_secret;
-  pg_ssl = local_settings.pg_ssl;
+  pg_ssl = false;
   redis_port = local_settings.redis_port;
   redis_host = local_settings.redis_host;
   redis_password = local_settings.redis_password;

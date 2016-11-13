@@ -48,3 +48,7 @@ label {
 #data-upload {
   display: none;
 }
+
+.home-select {
+  width: 15rem !important;
+}

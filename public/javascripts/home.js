@@ -4,18 +4,43 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
 
   $scope.states = [];
   $scope.counties = [];
+  $scope.species = [];
   $scope.startYear = 1900;
   $scope.endYear = 2017;
   $scope.state = null;
   $scope.county = null;
   $scope.spec = null;
 
+  $scope.results = [];
+
   function setup() {
 
   }
 
   $scope.search = function() {
-    $('#search-results').removeClass('hidden');
+    //TODO: need to send state, county, and species as arrays... maybe convert to strings and add brackets manually
+    var query_params = {
+      start: $scope.startYear,
+      end: $scope.endYear,
+      state: $scope.state,
+      county: $scope.county,
+      species: $scope.spec
+    };
+    var config = {
+     params: query_params,
+     headers : {'Accept' : 'application/json'}
+    };
+    $http.get(getServer()+'/query', config).then(function(response) {
+      if (response.data.status === 200) {
+        $scope.results = response.data.results;
+        console.log($scope.results)
+        $('#search-results').removeClass('hidden');
+      }
+      else {
+        console.log(response.data.error);
+      }
+    });
+
   }
 
   function backToOptions() {

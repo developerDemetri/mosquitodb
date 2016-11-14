@@ -212,4 +212,141 @@ router.get('/traps', function(req, res) {
   }
 });
 
+router.get('/query', function(req, res) {
+  //TODO: issues with query params not coming in arrays from client...
+  let result;
+  try {
+    let start = null;
+    let end = null;
+    let states = null;
+    let counties = null;
+    let species = null;
+    let errors = '';
+    if (req.query.start) {
+      if (checkInput(req.query.start,'number',null)) {
+        start = Number(req.query.start);
+      }
+      else {
+        errors += 'start ';
+      }
+    }
+    else {
+      start = 1900;
+    }
+    if (req.query.end) {
+      if (checkInput(req.query.end,'number',null)) {
+        end = Number(req.query.end);
+      }
+      else {
+        errors += 'end ';
+      }
+    }
+    else {
+      end = 2017;
+    }
+    if (req.query.state) {
+      req.query.state = JSON.parse(req.query.state);
+      if (Array.isArray(req.query.state) && req.query.state.length > 0) {
+        states = [];
+        for (let i = 0; i < req.query.state.length; i++) {
+          if (checkInput(req.query.state[i],'string',state_re)) {
+            states.push((req.query.state[i] + '').trim());
+          }
+          else {
+            errors += 'state ';
+            i = req.query.state.length;
+          }
+        }
+      }
+      else {
+        errors += 'state ';
+      }
+    }
+    if (req.query.county) {
+      req.query.county = JSON.parse(req.query.county);
+      if (Array.isArray(req.query.county) && req.query.county.length > 0) {
+        counties = [];
+        for (let i = 0; i < req.query.county.length; i++) {
+          if (checkInput(req.query.county[i],'number',null)) {
+            counties.push(Number(req.query.county[i]));
+          }
+          else {
+            errors += 'county ';
+            i = req.query.county.length;
+          }
+        }
+      }
+      else {
+        errors += 'county ';
+      }
+    }
+    if (req.query.species) {
+      req.query.species = JSON.parse(req.query.species);
+      if (Array.isArray(req.query.species) && req.query.species.length > 0) {
+        species = [];
+        for (let i = 0; i < req.query.species.length; i++) {
+          if (!checkInput(req.query.species[i],'number',null)) {
+            species.push(Number(req.query.species[i]));
+          }
+          else {
+            errors += 'species ';
+            i = req.query.species.length;
+          }
+        }
+      }
+      else {
+        errors += 'species ';
+      }
+    }
+    if (errors) {
+      result = {
+        "status": 400,
+        "error": 'Invalide Query Option(s): ' + errors.trim()
+      };
+      res.status(result.status).send(result);
+    }
+    else {
+      let query = 'search_by_dates';
+      let params = [start,end];
+      if (states) {
+        query += ' states';
+        params.push(states);
+      }
+      if (counties) {
+        query += ' counties';
+        params.push(counties);
+      }
+      if (species) {
+        query += ' species';
+        params.push(species);
+      }
+      query = query.trim().replace(" ", "_");
+      pg_tool.query(query, params, function(error, rows) {
+        if (error) {
+          result = {
+            "status": 500,
+            "error": 'Server Error'
+          };
+          res.status(result.status).send(result);
+        }
+        else {
+          result = {
+            "status": 200,
+            "results": rows
+          }
+          res.status(result.status).send(result);
+        }
+      });
+    }
+  }
+  catch (error) {
+    console.log(error);
+    result = {
+      "status": 500,
+      "error": "Server Error"
+    }
+    res.status(result.status).send(result);
+  }
+});
+
 module.exports = router;

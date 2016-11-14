@@ -56,7 +56,15 @@
               <th>WNV Results</th>
             </thead>
             <tbody>
-              <!-- dynamically populated -->
+              <tr ng-repeat="r in results">
+                <td>{{ r.year }}</td>
+                <td>{{ r.state }}</td>
+                <td>{{ r.county }}</td>
+                <td>{{ r.trap }}</td>
+                <td>{{ r.species }}</td>
+                <td>{{ r.pools }}</td>
+                <td>{{ r.wnv_results }}</td>
+              </tr>
             </tbody>
           </table>
         </div>

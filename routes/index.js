@@ -215,7 +215,6 @@ router.get('/traps', function(req, res) {
 router.get('/query', function(req, res) {
   let result;
   try {
-    console.log(req.query);
     let start = null;
     let end = null;
     let states = null;

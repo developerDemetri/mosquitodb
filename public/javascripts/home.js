@@ -73,18 +73,38 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
   });
 
   function populateCounties() {
-    $http.get(getServer()+'/counties/'+$scope.state).then(function(response) {
-      if (response.data.status === 200) {
-        $('#county').selectpicker();
-        $scope.counties = response.data.counties;
-        $timeout(function() {
-          $('#county').selectpicker('refresh');
-        }, 1);
+    if (Array.isArray($scope.state)) {
+      $scope.counties = [];
+      for (var i = 0; i < $scope.state.length; i++) {
+        $http.get(getServer()+'/counties/'+$scope.state[i]).then(function(response) {
+          if (response.data.status === 200) {
+            $('#county').selectpicker();
+            $scope.counties.push.apply($scope.counties, response.data.counties);
+            console.log($scope.counties)
+            $timeout(function() {
+              $('#county').selectpicker('refresh');
+            }, 1);
+          }
+          else {
+            console.log(response.data.error);
+          }
+        });
       }
-      else {
-        console.log(response.data.error);
-      }
-    });
+    }
+    else {
+      $http.get(getServer()+'/counties/'+$scope.state).then(function(response) {
+        if (response.data.status === 200) {
+          $('#county').selectpicker();
+          $scope.counties = response.data.counties;
+          $timeout(function() {
+            $('#county').selectpicker('refresh');
+          }, 1);
+        }
+        else {
+          console.log(response.data.error);
+        }
+      });
+    }
   }
 
   $scope.$watch('state', function(newvalue, oldvalue) {

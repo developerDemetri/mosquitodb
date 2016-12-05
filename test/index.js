@@ -132,12 +132,231 @@ describe('Data queries', function() {
         done();
       });
   });
-  it('Search', function(done) {
+  let query = {};
+  it('Blank Search', function(done) {
     let req = request(app).get('/query');
     req.cookies = cookies;
-    req.end(function(err, res) {
+    req.query(query).end(function(err, res) {
       if (err) done(err);
-      assert.equal(res.body.status, 200, "runs search");
+      assert.equal(res.body.status, 200, "runs blank search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by bad dates', function(done) {
+    query.start = 'hi';
+    query.end = 'there';
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 400, "fails date search");
+      assert.isUndefined(res.body.results);
+      done();
+    });
+  });
+  it('Search by good dates', function(done) {
+    query.start = 1996;
+    query.end = 2016;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs date search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by bad state', function(done) {
+    query.state = 808;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 400, "fails state search");
+      assert.isUndefined(res.body.results);
+      done();
+    });
+  });
+  it('Search by bad states', function(done) {
+    query.state = ['AZ',808];
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 400, "fails states search");
+      assert.isUndefined(res.body.results);
+      done();
+    });
+  });
+  it('Search by good state', function(done) {
+    query.state = 'AZ';
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs state search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by good states', function(done) {
+    query.state = ['AZ','HI'];
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs states search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by bad county', function(done) {
+    query.county = 'derp';
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 400, "fails county search");
+      assert.isUndefined(res.body.results);
+      done();
+    });
+  });
+  it('Search by bad counties', function(done) {
+    query.county = [3,'nope'];
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 400, "fails counties search");
+      assert.isUndefined(res.body.results);
+      done();
+    });
+  });
+  it('Search by good county', function(done) {
+    query.county = 3;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs county search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by good counties', function(done) {
+    query.county = [3,5];
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs counties search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by bad species', function(done) {
+    query.species = 'wat';
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 400, "fails species search");
+      assert.isUndefined(res.body.results);
+      done();
+    });
+  });
+  it('Search by multiple bad species', function(done) {
+    query.species = [2,'hey'];
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 400, "fails multiple species search");
+      assert.isUndefined(res.body.results);
+      done();
+    });
+  });
+  it('Search by good species', function(done) {
+    query.species = 2;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs species search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by multiple good species', function(done) {
+    query.species = [2,4];
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs multiple species search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  /*
+  * These next few test have no effect on code coverage.
+  * They are testing the untested query strings in bin/queries.js
+  */
+  it('Search by species and counties only', function(done) {
+    query.state = null;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs species and counties only search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by species and states only', function(done) {
+    query.state = 'AZ';
+    query.county = null;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs species and states only search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by states and counties only', function(done) {
+    query.county = 2;
+    query.species = null;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs states and counties only search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by counties only', function(done) {
+    query.state = null;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs counties only search");
+      assert.isArray(res.body.results);
+      done();
+    });
+  });
+  it('Search by species only', function(done) {
+    query.county = null;
+    query.species = 4;
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.query(query).end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs counties only search");
       assert.isArray(res.body.results);
       done();
     });

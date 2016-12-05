@@ -287,7 +287,7 @@ router.get('/query', function(req, res) {
       species = [];
       if (Array.isArray(req.query.species) && req.query.species.length > 0) {
         for (let i = 0; i < req.query.species.length; i++) {
-          if (!checkInput(req.query.species[i],'number',null)) {
+          if (checkInput(req.query.species[i],'number',null)) {
             species.push(Number(req.query.species[i]));
           }
           else {

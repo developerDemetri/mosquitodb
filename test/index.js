@@ -46,6 +46,16 @@ describe('Should not allow cross-site calls', function() {
       done();
     });
   });
+  it('Should not run search', function(done) {
+    request(app)
+    .get('/query')
+    .end(function(err, res) {
+      if (err) done(err);
+      assert.isUndefined(res.body.traps);
+      assert.equal(res.body.status, 401, "denies search");
+      done();
+    });
+  });
 });
 
 describe('Allowed Value Retreival', function() {
@@ -106,6 +116,29 @@ describe('Allowed Value Retreival', function() {
       if (err) done(err);
       assert.equal(res.body.status, 200, "gets traps");
       assert.isArray(res.body.traps);
+      done();
+    });
+  });
+});
+
+describe('Data queries', function() {
+  let cookies;
+  it('Setting up cookies', function(done) {
+    request(app)
+      .get('/')
+      .end(function(err, res) {
+        if (err) done(err);
+        cookies = res.headers['set-cookie'].pop().split(';')[0];
+        done();
+      });
+  });
+  it('Search', function(done) {
+    let req = request(app).get('/query');
+    req.cookies = cookies;
+    req.end(function(err, res) {
+      if (err) done(err);
+      assert.equal(res.body.status, 200, "runs search");
+      assert.isArray(res.body.results);
       done();
     });
   });

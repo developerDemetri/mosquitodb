@@ -3,12 +3,72 @@
   <head>
     <%- include('header'); %>
     <title>MosquitoDB | Home</title>
+    <link rel="stylesheet" href="stylesheets/bootstrap-select.min.css">
+    <script type="text/javascript" src="javascripts/bootstrap-select.min.js"></script>
     <script type="text/javascript" src="javascripts/home.js"></script>
   </head>
   <%- include('navbar'); %>
   <body ng-app="mosquitoApp" ng-controller="homeController">
-    <div class="container">
-      <h1 class="text-center" ng-cloak><i class="fa fa-hourglass-half" aria-hidden="true"></i> {{greeting}} <i class="fa fa-hourglass-half" aria-hidden="true"></i></h1>
+    <div id="search-options" class="container">
+      <h1 class="text-center">Query Mosquito Data</h1>
+      <div class="row">
+        <div class="col-md-2 col-md-offset-1">
+          <label for="state">State</label>
+          <select ng-model="state" ng-options="item.code as item.name for item in states" id="state" class="selectpicker home-select" multiple required>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="county">County</label>
+          <select ng-model="county" ng-options="item.id as item.name for item in counties" id="county" class="selectpicker home-select" multiple required>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="species">Species</label>
+          <select ng-model="spec" ng-options="item.id as item.name for item in species" id="species" class="selectpicker home-select" multiple required>
+          </select>
+        </div>
+        <div class="col-md-1">
+          <label for="start-year">Start Year</label>
+          <input class="form-control" id="start-year" ng-model="startYear" type="number" min="1900" max="2016" required/>
+        </div>
+        <div class="col-md-1">
+          <label for="end-year">End Year</label>
+          <input class="form-control" id="end-year" ng-model="endYear" type="number" min="1901" max="2017" required/>
+        </div>
+        <div class="col-md-1 col-md-offset-1">
+          <label for="end-year">Search</label>
+          <button class="btn btn-success" ng-click="search();"><i class="fa fa-search" aria-hidden="true"></i> </button>
+        </div>
+      </div>
+    </div>
+    <div id="search-results" class="container hidden">
+      <h3 class="text-center">Results</h3>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <table class="table table-striped table-hover">
+            <thead>
+              <th>Year</th>
+              <th>State</th>
+              <th>County</th>
+              <th>Trap Type</th>
+              <th>Species</th>
+              <th>Pools</th>
+              <th>WNV Results</th>
+            </thead>
+            <tbody>
+              <tr ng-repeat="r in results">
+                <td>{{ r.year }}</td>
+                <td>{{ r.state }}</td>
+                <td>{{ r.county }}</td>
+                <td>{{ r.trap }}</td>
+                <td>{{ r.species }}</td>
+                <td>{{ r.pools }}</td>
+                <td>{{ r.wnv_results }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </body>
   <%- include('footer'); %>

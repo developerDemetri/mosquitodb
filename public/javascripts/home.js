@@ -18,7 +18,6 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
   }
 
   $scope.search = function() {
-    //TODO: need to send state, county, and species as arrays... maybe convert to strings and add brackets manually
     var query_params = {
       start: $scope.startYear,
       end: $scope.endYear,

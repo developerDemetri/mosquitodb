@@ -14,13 +14,13 @@ const queries = {
   'create_query': fs.readFileSync('bin/create_schema.sql').toString().trim(),
   'county_insert_query': 'INSERT INTO mosquito.county (name, state_code) VALUES ($1, $2)',
   'search_by_dates': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 and $2',
-  'search_by_dates_states': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code IN ($3)',
-  'search_by_dates_counties': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 and $2 AND county_id IN ($3)',
-  'search_by_dates_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 and $2 AND species_id IN ($3)',
-  'search_by_dates_states_counties': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code IN ($3) AND county_id IN ($4)',
-  'search_by_dates_states_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code IN ($3) AND species_id IN ($4)',
-  'search_by_dates_counties_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND county_id IN ($3) AND species_id IN ($4)',
-  'search_by_dates_states_counties_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code IN ($3) AND county_id IN ($4) AND species_id IN ($5)',
+  'search_by_dates_states': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code = ANY ($3)',
+  'search_by_dates_counties': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 and $2 AND county_id = ANY ($3)',
+  'search_by_dates_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 and $2 AND species_id = ANY ($3)',
+  'search_by_dates_states_counties': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code = ANY($3) AND county_id = ANY($4)',
+  'search_by_dates_states_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code = ANY($3) AND species_id = ANY($4)',
+  'search_by_dates_counties_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND county_id = ANY($3) AND species_id = ANY($4)',
+  'search_by_dates_states_counties_species': 'SELECT year, state_code, county_id, trap_id, species_id, pools, wnv_results FROM mosquito.collection WHERE year BETWEEN $1 AND $2 AND state_code = ANY($3) AND county_id = ANY($4) AND species_id = ANY($5)'
 };
 
 module.exports = queries;

@@ -213,9 +213,9 @@ router.get('/traps', function(req, res) {
 });
 
 router.get('/query', function(req, res) {
-  //TODO: issues with query params not coming in arrays from client...
   let result;
   try {
+    console.log(req.query);
     let start = null;
     let end = null;
     let states = null;
@@ -245,9 +245,8 @@ router.get('/query', function(req, res) {
       end = 2017;
     }
     if (req.query.state) {
-      req.query.state = JSON.parse(req.query.state);
+      states = [];
       if (Array.isArray(req.query.state) && req.query.state.length > 0) {
-        states = [];
         for (let i = 0; i < req.query.state.length; i++) {
           if (checkInput(req.query.state[i],'string',state_re)) {
             states.push((req.query.state[i] + '').trim());
@@ -258,14 +257,16 @@ router.get('/query', function(req, res) {
           }
         }
       }
+      else if (checkInput(req.query.state,'string',state_re)) {
+        states.push((req.query.state + '').trim());
+      }
       else {
         errors += 'state ';
       }
     }
     if (req.query.county) {
-      req.query.county = JSON.parse(req.query.county);
+      counties = [];
       if (Array.isArray(req.query.county) && req.query.county.length > 0) {
-        counties = [];
         for (let i = 0; i < req.query.county.length; i++) {
           if (checkInput(req.query.county[i],'number',null)) {
             counties.push(Number(req.query.county[i]));
@@ -276,14 +277,16 @@ router.get('/query', function(req, res) {
           }
         }
       }
+      else if (checkInput(req.query.county,'number',null)) {
+        counties.push(Number(req.query.county));
+      }
       else {
         errors += 'county ';
       }
     }
     if (req.query.species) {
-      req.query.species = JSON.parse(req.query.species);
+      species = [];
       if (Array.isArray(req.query.species) && req.query.species.length > 0) {
-        species = [];
         for (let i = 0; i < req.query.species.length; i++) {
           if (!checkInput(req.query.species[i],'number',null)) {
             species.push(Number(req.query.species[i]));
@@ -293,6 +296,9 @@ router.get('/query', function(req, res) {
             i = req.query.species.length;
           }
         }
+      }
+      else if (checkInput(req.query.species,'number',null)) {
+        species.push(Number(req.query.species));
       }
       else {
         errors += 'species ';
@@ -320,7 +326,7 @@ router.get('/query', function(req, res) {
         query += ' species';
         params.push(species);
       }
-      query = query.trim().replace(" ", "_");
+      query = query.trim().replace(/ /g, "_");
       pg_tool.query(query, params, function(error, rows) {
         if (error) {
           result = {

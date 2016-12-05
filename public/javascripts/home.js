@@ -32,7 +32,6 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
     $http.get(getServer()+'/query', config).then(function(response) {
       if (response.data.status === 200) {
         $scope.results = response.data.results;
-        console.log($scope.results)
         $('#search-results').removeClass('hidden');
       }
       else {
@@ -80,7 +79,6 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
           if (response.data.status === 200) {
             $('#county').selectpicker();
             $scope.counties.push.apply($scope.counties, response.data.counties);
-            console.log($scope.counties)
             $timeout(function() {
               $('#county').selectpicker('refresh');
             }, 1);

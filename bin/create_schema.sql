@@ -60,6 +60,39 @@ CREATE INDEX county_state_index
   USING btree
   (state_code COLLATE pg_catalog."default");
 
+CREATE TABLE mosquito.user (
+  name character varying(63) NOT NULL,
+  password character varying(63) NOT NULL,
+  organization character varying(255) NOT NULL,
+  email character varying(255) NOT NULL,
+  is_admin boolean NOT NULL DEFAULT false,
+  CONSTRAINT user_pkey PRIMARY KEY (name),
+  CONSTRAINT unique_email UNIQUE (email)
+)
+WITH (
+  OIDS=FALSE
+);
+COMMENT ON TABLE mosquito.user IS 'MosquitoDB user account information.';
+
+CREATE TABLE mosquito.batch (
+  id serial NOT NULL,
+  submitter character varying(63) NOT NULL,
+  is_verified boolean NOT NULL DEFAULT false,
+  CONSTRAINT batch_pkey PRIMARY KEY (id),
+  CONSTRAINT submitter_fkey FOREIGN KEY (submitter)
+    REFERENCES mosquito.user (name) MATCH SIMPLE
+    ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+COMMENT ON TABLE mosquito.batch IS 'Batches of submitted collections for approval or rollback.';
+
+CREATE INDEX batch_user_index
+  ON mosquito.batch
+  USING btree
+  (submitter COLLATE pg_catalog."default");
+
 CREATE TABLE mosquito.collection (
   id serial NOT NULL,
   year smallint NOT NULL,
@@ -74,6 +107,7 @@ CREATE TABLE mosquito.collection (
   trap_nights smallint,
   wnv_results bigint NOT NULL,
   comment text,
+  batch_id integer NOT NULL,
   CONSTRAINT record_pkey PRIMARY KEY (id),
   CONSTRAINT collection_state_fkey FOREIGN KEY (state_code)
     REFERENCES mosquito.state (code) MATCH SIMPLE
@@ -83,6 +117,9 @@ CREATE TABLE mosquito.collection (
     ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT collection_species_fkey FOREIGN KEY (species_id)
     REFERENCES mosquito.species (id) MATCH SIMPLE
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT batch_fkey FOREIGN KEY (batch_id)
+    REFERENCES mosquito.batch (id) MATCH SIMPLE
     ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
@@ -104,3 +141,8 @@ CREATE INDEX collection_species_index
   ON mosquito.collection
   USING btree
   (species_id);
+
+CREATE INDEX collection_batch_index
+  ON mosquito.collection
+  USING btree
+  (batch_id);

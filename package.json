@@ -9,6 +9,7 @@
     "test": "./node_modules/istanbul/lib/cli.js cover -x **/secret_settings.js ./node_modules/mocha/bin/_mocha"
   },
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.15.1",
     "cheerio": "^0.22.0",
     "connect-redis": "^3.1.0",

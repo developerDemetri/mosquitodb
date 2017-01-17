@@ -28,11 +28,11 @@ let router = express.Router();
 router.get('/', function(req, res) {
   try {
     req.session.mdb_key = mdb_key;
-    res.render('submit');
+    res.status(200).render('submit', {user: req.session.user});
   }
   catch (error) {
     console.log(error);
-    res.render('error');
+    res.status(500).render('error');
   }
 });
 
@@ -402,12 +402,18 @@ function processSubmissions(submissions, callback) {
           "error": 'Database Error'
         };
         errors.push(err);
-        next();
+        rollbackSubmission(1);//TODO: need batch id
+        callback(errors);
       }
     }
   }, function () {
     callback(errors);
   });
-}
+};
+
+function rollbackSubmission(batch_id) {
+  console.log('rolling back submission for batch: ', batch_id);
+  //TODO: rollback batch
+};
 
 module.exports = router;

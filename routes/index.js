@@ -15,33 +15,33 @@ let router = express.Router();
 router.get('/', function(req, res) {
   try {
     req.session.mdb_key = mdb_key;
-    res.render('home');
+    res.status(200).render('home', {user: req.session.user});
   }
   catch (error) {
     console.log(error);
-    res.render('error');
+    res.status(500).render('error');
   }
 });
 
 router.get('/about', function(req, res) {
   try {
     req.session.mdb_key = mdb_key;
-    res.render('about');
+    res.status(200).render('about', {user: req.session.user});
   }
   catch (error) {
     console.log(error);
-    res.render('error');
+    res.status(500).render('error');
   }
 });
 
 router.get('/api', function(req, res) {
   try {
     req.session.mdb_key = mdb_key;
-    res.render('api');
+    res.status(200).render('api', {user: req.session.user});
   }
   catch (error) {
     console.log(error);
-    res.render('error');
+    res.status(500).render('error');
   }
 });
 

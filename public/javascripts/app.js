@@ -1,23 +1,33 @@
 'use strict';
 
-function getServer() {
-  return location.protocol + '//' + location.hostname + ':' + location.port;
-}
+angular.module('mosquitoApp', []).run(function($rootScope, $http, $window) {
 
-function checkInput(input, type, regex) {
-  if (input) {
-    if (type === 'string') {
-      if (typeof(input) === 'string' && regex.test(input)) {
-        return true;
+  $rootScope.server = location.protocol + '//' + location.hostname + ':' + location.port;
+
+  $rootScope.logout = function() {
+    $http.delete($rootScope.server+'/logout', data)
+    .success(function(response) {
+      window.location.replace($rootScope.server+'/');
+    })
+    .error(function(response) {
+      console.log("Failed to log out: ", response);
+    });
+  };
+
+  $rootScope.checkInput = function(input, type, regex) {
+    if (input) {
+      if (type === 'string') {
+        if (typeof(input) === 'string' && regex.test(input)) {
+          return true;
+        }
+      }
+      else if (type === 'number') {
+        if (typeof(input) === 'number' || !(isNaN(input))) {
+          return true;
+        }
       }
     }
-    else if (type === 'number') {
-      if (typeof(input) === 'number' || !(isNaN(input))) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
+    return false;
+  };
 
-angular.module('mosquitoApp', []);
+});

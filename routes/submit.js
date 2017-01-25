@@ -18,6 +18,7 @@ let fs = require('fs');
 let csv = require('csv-parse');
 let async_loop = require('node-async-loop');
 
+const name_re = /^\w{3,63}?$/;
 const state_re = /^[a-zA-Z]{2}$/;
 const comment_re = /^(\w| |-|@|!|&|\(|\)|#|_|\+|%|\^|\$|\*|'|\"|\?|\.)*$/;
 const file_re = /^\w(\w|-|\.| ){0,250}\.csv$/;
@@ -25,10 +26,18 @@ const base_error = 'Invalid Parameter(s): ';
 
 let router = express.Router();
 
+function isAuthorized(req) {
+  return (req.session.mdb_key === mdb_key && checkInput(req.user, 'string', name_re));
+};
+
 router.get('/', function(req, res) {
   try {
-    req.session.mdb_key = mdb_key;
-    res.status(200).render('submit', {user: req.session.user});
+    if (isAuthorized(req)) {
+      res.status(200).render('submit', {user: req.session.user});
+    }
+    else {
+      res.status(302).redirect('/account');
+    }
   }
   catch (error) {
     console.log(error);
@@ -39,7 +48,7 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
+    if (isAuthorized(req)) {
       if (checkInput(req.body.year,'number',null) && checkInput(req.body.state,'string',state_re) && checkInput(req.body.county,'number',null) && checkInput(req.body.species,'number',null) && checkInput(req.body.trap,'number',null) && checkInput(req.body.wnv_results,'number',null) && checkInput(req.body.pools,'number',null)) {
         let errs = base_error;
         let curr_date = new Date();
@@ -193,7 +202,7 @@ router.post('/', function(req, res) {
 router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
+    if (isAuthorized(req)) {
       if (req.file) {
         if (file_re.test(req.file.originalname)) {
           let submissions = [];

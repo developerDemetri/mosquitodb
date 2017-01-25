@@ -9,9 +9,10 @@
         </div>
       </div>
       <% if (user) { %>
-        <a class="navbar-brand pull-right" href="#" onclick="console.log('should pop up options modal')"><%= user %></a>
+        <a class="navbar-brand pull-right" href="#" onclick="logout();">Log Out</a>
+        <a class="navbar-brand pull-right" href="#"><%= user %></a>
       <% } else { %>
-        <a class="navbar-brand pull-right" href="#" onclick="console.log('should pop up log in modal')">Sign In</a>
+        <a class="navbar-brand pull-right" href="/account" >Sign In</a>
       <% } %>
     </div>
   </div>

@@ -10,7 +10,7 @@ let session_tool = require('./bin/session_tool');
 
 let index = require('./routes/index');
 let submit = require('./routes/submit');
-let register = require('./routes/register');
+let account = require('./routes/account');
 
 let app = express();
 
@@ -26,7 +26,7 @@ app.use(session_tool);
 
 app.use('/', index);
 app.use('/submit', submit);
-app.use('/register', register);
+app.use('/account', account);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

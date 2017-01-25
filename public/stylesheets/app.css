@@ -58,3 +58,7 @@ label {
 a {
   text-decoration: none !important;
 }
+
+.logout-text {
+  font-size: 1.5rem;
+}

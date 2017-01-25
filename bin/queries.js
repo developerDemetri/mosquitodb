@@ -7,7 +7,7 @@ const queries = {
   'get_counties': 'SELECT id, name FROM mosquito.county WHERE state_code=$1 ORDER BY name ASC',
   'get_species': 'SELECT id, name FROM mosquito.species ORDER BY name ASC',
   'get_traps': 'SELECT id, name FROM mosquito.trap ORDER BY name ASC',
-  'insert_collection': 'INSERT INTO mosquito.collection(year, month, week, state_code, county_id, trap_id, species_id, pools, individuals, trap_nights, wnv_results, comment) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
+  'insert_collection': 'INSERT INTO mosquito.collection(year, month, week, state_code, county_id, trap_id, species_id, pools, individuals, trap_nights, wnv_results, comment, batch_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)',
   'trap_insert_query': 'INSERT INTO mosquito.trap (name, comment) VALUES ($1, $2)',
   'species_insert_query': 'INSERT INTO mosquito.species (name) VALUES ($1)',
   'state_insert_query': 'INSERT INTO mosquito.state (code, name) VALUES ($1,$2)',
@@ -22,7 +22,9 @@ const queries = {
   'search_by_dates_counties_species': 'SELECT year, mosquito.collection.state_code as state, mosquito.county.name as county, mosquito.trap.name as trap, mosquito.species.name as species, pools, wnv_results FROM mosquito.collection JOIN mosquito.county ON county_id=mosquito.county.id JOIN mosquito.trap ON trap_id=mosquito.trap.id JOIN mosquito.species ON species_id=mosquito.species.id WHERE year BETWEEN $1 AND $2 AND county_id = ANY($3) AND species_id = ANY($4)',
   'search_by_dates_states_counties_species': 'SELECT year, mosquito.collection.state_code as state, mosquito.county.name as county, mosquito.trap.name as trap, mosquito.species.name as species, pools, wnv_results FROM mosquito.collection JOIN mosquito.county ON county_id=mosquito.county.id JOIN mosquito.trap ON trap_id=mosquito.trap.id JOIN mosquito.species ON species_id=mosquito.species.id WHERE year BETWEEN $1 AND $2 AND mosquito.collection.state_code = ANY($3) AND county_id = ANY($4) AND species_id = ANY($5)',
   'create_user': 'INSERT INTO mosquito.user (name, password, organization, email) VALUES ($1, $2, $3, $4)',
-  'get_user_password': 'SELECT password FROM mosquito.user WHERE name=$1'
+  'get_user_password': 'SELECT password FROM mosquito.user WHERE name=$1',
+  'insert_batch': 'INSERT INTO mosquito.batch (submitter) VALUES ($1) RETURNING id',
+  'rollback_batch': 'DELETE FROM mosquito.batch WHERE id=$1 AND submitter=$2 AND is_verified=false'
 };
 
 module.exports = queries;

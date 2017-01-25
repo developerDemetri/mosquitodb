@@ -9,7 +9,7 @@
         </div>
       </div>
       <% if (user) { %>
-        <a class="navbar-brand pull-right" href="" ng-click="logout();">Log Out</a>
+        <a class="navbar-brand pull-right logout-text" href="" ng-click="logout();">Log Out</a>
         <a class="navbar-brand pull-right" href=""><%= user %></a>
       <% } else { %>
         <a class="navbar-brand pull-right" href="/account" >Sign In</a>

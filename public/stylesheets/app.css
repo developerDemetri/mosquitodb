@@ -54,3 +54,7 @@ label {
 .home-select {
   width: 15rem !important;
 }
+
+a {
+  text-decoration: none !important;
+}

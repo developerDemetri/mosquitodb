@@ -11,7 +11,7 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
   $scope.county = null;
   $scope.spec = null;
 
-  $scope.results = [];
+  $scope.results = null;
 
   $scope.search = function() {
     var query_params = {
@@ -28,7 +28,6 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
     $http.get($scope.server+'/query', config).then(function(response) {
       if (response.data.status === 200) {
         $scope.results = response.data.results;
-        $('#search-results').removeClass('hidden');
       }
       else {
         console.log(response.data.error);
@@ -101,5 +100,11 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
       populateCounties();
     }
   });
+
+  $scope.handleEnter = function(keyEvent) {
+    if (keyEvent.which === 13) {
+      $scope.search();
+    }
+  };
 
 });

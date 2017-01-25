@@ -9,8 +9,8 @@
         </div>
       </div>
       <% if (user) { %>
-        <a class="navbar-brand pull-right" href="#" onclick="logout();">Log Out</a>
-        <a class="navbar-brand pull-right" href="#"><%= user %></a>
+        <a class="navbar-brand pull-right" href="" onclick="logout();">Log Out</a>
+        <a class="navbar-brand pull-right" href=""><%= user %></a>
       <% } else { %>
         <a class="navbar-brand pull-right" href="/account" >Sign In</a>
       <% } %>

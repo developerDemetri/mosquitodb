@@ -10,15 +10,21 @@ angular.module('mosquitoApp').controller('accountController', function ($scope, 
   var email_re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   $scope.error = null;
-  $scope.isRegistering;
+  $scope.isRegistering = false;
 
-  $scope.name = null;
+  $scope.loginName = null;
   $scope.pass = null;
 
+  $scope.registerName = null;
+  $scope.organization = null;
+  $scope.email = null;
+  $scope.pass1 = null;
+  $scope.pass2 = null;
+
   $scope.login = function() {
-    if ($scope.checkInput($scope.name, 'string', name_re) && $scope.checkInput($scope.pass, 'string', password_re)) {
+    if ($scope.checkInput($scope.loginName, 'string', name_re) && $scope.checkInput($scope.pass, 'string', password_re)) {
         var account = {
-          name: $scope.name.trim().toLowerCase(),
+          name: $scope.loginName.trim().toLowerCase(),
           password: $scope.pass
         };
         $http.post($scope.server+'/auth', account, null).then(
@@ -46,16 +52,11 @@ angular.module('mosquitoApp').controller('accountController', function ($scope, 
     }
   };
 
-  $scope.name = null;
-  $scope.organization = null;
-  $scope.email = null;
-  $scope.pass1 = null;
-  $scope.pass2 = null;
-
   $scope.register = function() {
-    if ($scope.name && $scope.organization && $scope.email && $scope.pass1 && $scope.pass2) {
+    console.log('registering')
+    if ($scope.registerName && $scope.organization && $scope.email && $scope.pass1 && $scope.pass2) {
       var errors = err_msg;
-      if (!name_re.test($scope.name)) {
+      if (!name_re.test($scope.registerName)) {
         errors += 'Username ';
       }
       if (!organization_re.test($scope.organization)) {
@@ -72,7 +73,7 @@ angular.module('mosquitoApp').controller('accountController', function ($scope, 
       }
       if (errors === err_msg) {
         var account = {
-          name: $scope.name.trim().toLowerCase(),
+          name: $scope.registerName.trim().toLowerCase(),
           organization: $scope.organization.trim(),
           email: $scope.email.trim().toLowerCase(),
           password: $scope.pass1
@@ -94,11 +95,27 @@ angular.module('mosquitoApp').controller('accountController', function ($scope, 
         );
       }
       else {
-        console.log(errors.trim());
+        $scope.error = errors.trim();
       }
     }
     else {
-      console.log('missing fields')
+      $scope.error = 'Please fill all fields!';
+    }
+  };
+
+  $scope.switchToRegistration = function() {
+    $scope.error = null;
+    $scope.isRegistering = true;
+  };
+
+  $scope.handleEnter = function(keyEvent) {
+    if (keyEvent.which === 13) {
+      if ($scope.isRegistering) {
+        $scope.register();
+      }
+      else {
+        $scope.login();
+      }
     }
   };
 

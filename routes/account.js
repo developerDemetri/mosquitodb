@@ -30,7 +30,6 @@ router.post('/auth', function(req, res) {
   try {
     let result;
     if (req.session.mdb_key === mdb_key) {
-      console.log(req.body)
       if (checkInput(req.body.name, 'string', name_re) && checkInput(req.body.password, 'string', password_re)) {
         const name = req.body.name + '';
         pg_tool.query('get_user_password', [name], function(error, rows) {

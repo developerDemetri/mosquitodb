@@ -27,11 +27,12 @@ angular.module('mosquitoApp').controller('accountController', function ($scope, 
           name: $scope.loginName.trim().toLowerCase(),
           password: $scope.pass
         };
-        $http.post($scope.server+'/auth', account, null).then(
+        $http.post($scope.server+'/account/auth', account).then(
            function(response) {
+             console.log(response)
              $scope.error = null;
              if (response.status === 200) {
-               if (response.message === 'Successfully Authorized') {
+               if (response.data.message === 'Successfully Authorized') {
                  $window.location.href = $scope.server+'/';
                }
                else {
@@ -53,7 +54,6 @@ angular.module('mosquitoApp').controller('accountController', function ($scope, 
   };
 
   $scope.register = function() {
-    console.log('registering')
     if ($scope.registerName && $scope.organization && $scope.email && $scope.pass1 && $scope.pass2) {
       var errors = err_msg;
       if (!name_re.test($scope.registerName)) {
@@ -82,7 +82,6 @@ angular.module('mosquitoApp').controller('accountController', function ($scope, 
            function(response) {
              $scope.error = null;
              if (response.status === 201) {
-               console.log('successfully created account');
                $window.location.href = $scope.server+'/';
              }
              else {

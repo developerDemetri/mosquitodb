@@ -5,9 +5,9 @@ angular.module('mosquitoApp', []).run(function($rootScope, $http, $window) {
   $rootScope.server = location.protocol + '//' + location.hostname + ':' + location.port;
 
   $rootScope.logout = function() {
-    $http.delete($rootScope.server+'/logout', data)
+    $http.delete($rootScope.server+'/account/logout')
     .success(function(response) {
-      window.location.replace($rootScope.server+'/');
+      $window.location.href = $rootScope.server+'/';
     })
     .error(function(response) {
       console.log("Failed to log out: ", response);

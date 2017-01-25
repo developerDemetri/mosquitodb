@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-static-top">
+<nav ng-app="mosquitoApp" class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand pull-left" href="/">MosquitoDB</a>
@@ -9,7 +9,7 @@
         </div>
       </div>
       <% if (user) { %>
-        <a class="navbar-brand pull-right" href="" onclick="logout();">Log Out</a>
+        <a class="navbar-brand pull-right" href="" ng-click="logout();">Log Out</a>
         <a class="navbar-brand pull-right" href=""><%= user %></a>
       <% } else { %>
         <a class="navbar-brand pull-right" href="/account" >Sign In</a>

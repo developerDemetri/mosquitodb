@@ -43,17 +43,9 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $('#toggle-icon').removeClass('fa-keyboard-o');
       $('#toggle-icon').addClass('fa-upload');
     }
-  }
+  };
 
-  function unhideElements() {
-    $('.manual-form').removeClass('hidden');
-    $('.upload-form').removeClass('hidden');
-    $('#error-alert').removeClass('hidden');
-    $('#success-alert').removeClass('hidden');
-    setupFileUploader();
-  }
-
-  unhideElements();
+  setupFileUploader();
 
   $http.get($scope.server+'/states').then(function(response) {
     if (response.data.status === 200) {
@@ -107,7 +99,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         console.log(response.data.error);
       }
     });
-  }
+  };
 
   $scope.$watch('state', function(newvalue, oldvalue) {
     if (newvalue) {
@@ -178,11 +170,11 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       if (!$scope.checkInput($scope.pools,'number',null)) {
         $scope.error += 'Pools ';
       }
-      if (!checkInput($scope.wnv_results,'number',null)) {
+      if (!$scope.checkInput($scope.wnv_results,'number',null)) {
         $scope.error += 'WNV_Results ';
       }
     }
-  }
+  };
 
   function clearForm() {
     $scope.was_successful = true;
@@ -201,7 +193,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     $timeout(function() {
       $('.selectpicker').selectpicker('val','');
     }, 1);
-  }
+  };
 
   function setupFileUploader() {
     $(document).on('change', ':file', function() {
@@ -213,7 +205,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $('#filename-label').html($scope.filename);
       $scope.fileToSend = input.get(0).files[0];
     });
-  }
+  };
 
   $scope.submitFile = function() {
     $scope.was_successful = false;
@@ -232,7 +224,6 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
             processData: false,
             success: function(data) {
               if (data.status === 202) {
-                $('#upload_results').removeClass('hidden');
                 $scope.error = null;
                 $scope.fileToSend = null;
                 $scope.filename = 'none';
@@ -254,6 +245,17 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     else {
       $scope.error = 'Please Select a File';
     }
-  }
+  };
+
+  $scope.handleEnter = function(keyEvent) {
+    if (keyEvent.which === 13) {
+      if ($scope.upload) {
+        $scope.submitFile();
+      }
+      else {
+        $scope.submitData();
+      }
+    }
+  };
 
 });

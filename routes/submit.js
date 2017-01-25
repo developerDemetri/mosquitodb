@@ -27,7 +27,7 @@ const base_error = 'Invalid Parameter(s): ';
 let router = express.Router();
 
 function isAuthorized(req) {
-  return (req.session.mdb_key === mdb_key && checkInput(req.user, 'string', name_re));
+  return (req.session.mdb_key === mdb_key && checkInput(req.session.user, 'string', name_re));
 };
 
 router.get('/', function(req, res) {

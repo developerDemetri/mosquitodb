@@ -8,6 +8,7 @@ let request = require('supertest');
 let express = require('express');
 let app = require('../app');
 let ejs = require('ejs');
+let getCookies = require('./test_tool').getCookies;
 
 describe('Views', function() {
   let spy = sinon.spy(ejs, '__express');
@@ -31,9 +32,22 @@ describe('Views', function() {
       done();
     });
   });
+  let cookies;
+  it('Getting Cookies', function(done) {
+    getCookies(function(err, freshCookies) {
+      if (err) {
+        done(err);
+      }
+      else {
+        cookies = freshCookies;
+        done();
+      }
+    });
+  });
   it('Should return submit page when submit route is called', function(done) {
-    request(app)
-    .get('/submit')
+    let req = request(app);
+    req.cookies = cookies;
+    req.get('/submit')
     .end(function(err, res) {
       if (err) done(err);
       assert.isNotNull(res.body, 'got submit page');

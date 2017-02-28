@@ -18,6 +18,9 @@ let redis_db;
 let mdb_api_key;
 let captcha_secret;
 
+let test_user;
+let test_pass;
+
 
 if (process.env.im_live) {
   console.log('loading prod settings..');
@@ -42,6 +45,8 @@ if (process.env.im_live) {
   }
   mdb_api_key = process.env.mdb_api_key;
   captcha_secret = process.env.captcha_secret;
+  test_user = process.env.test_user;
+  test_pass = process.env.test_pass;
 }
 else {
   console.log('loading local settings..');
@@ -60,6 +65,8 @@ else {
   redis_db = local_settings.redis_db;
   mdb_api_key = local_settings.mdb_api_key;
   captcha_secret = local_settings.captcha_secret;
+  test_user = local_settings.test_user;
+  test_pass = local_settings.test_pass;
 }
 
 const db_config = {
@@ -89,12 +96,18 @@ const redis_config = {
   db: redis_db
 };
 
+const test_settings = {
+  fake_user: test_user,
+  fake_pass: test_pass
+};
+
 const secret_settings = {
   db_config: db_config,
   session_config: session_config,
   pg_ssl: pg_ssl,
   api_settings: api_settings,
-  redis_config: redis_config
+  redis_config: redis_config,
+  test_settings: test_settings
 };
 
 module.exports = secret_settings;

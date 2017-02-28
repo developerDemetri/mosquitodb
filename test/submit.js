@@ -4,8 +4,9 @@ let express = require('express');
 let app = require('../app');
 let request = require('supertest');
 let assert = require('chai').assert;
+let getCookies = require('./test_tool').getCookies;
 
-describe('Should not allow cross-site submissions', function() {
+describe('Should not allow unauthenticated submissions', function() {
   it('Should not allow manual submission', function(done) {
     request(app)
     .post('/submit')
@@ -17,7 +18,7 @@ describe('Should not allow cross-site submissions', function() {
     });
   });
   it('Should not allow upload submission', function(done) {
-    let path = __dirname+'/test-submission.csv';
+    let path = __dirname+'/bad-submission.csv';
     request(app).post('/submit/upload')
     .attach('mosquitoFile', path)
     .end(function(err, res) {
@@ -31,14 +32,16 @@ describe('Should not allow cross-site submissions', function() {
 
 describe('Submitting Manual Form', function() {
   let cookies;
-  it('Setting up cookies', function(done) {
-    request(app)
-      .get('/')
-      .end(function(err, res) {
-        if (err) done(err);
-        cookies = res.headers['set-cookie'].pop().split(';')[0];
+  it('Getting Cookies', function(done) {
+    getCookies(function(err, freshCookies) {
+      if (err) {
+        done(err);
+      }
+      else {
+        cookies = freshCookies;
         done();
-      });
+      }
+    });
   });
   let test_sumbmission = {
           "year": 'hi',
@@ -58,6 +61,7 @@ describe('Submitting Manual Form', function() {
     let req = request(app).post('/submit');
     req.cookies = cookies;
     req.send(test_sumbmission)
+    .expect('Content-Type', /json/)
     .end(function(err, res) {
       if (err) done(err);
       assert.equal(res.body.error, 'Invalid Parameter(s): year');
@@ -325,14 +329,16 @@ describe('Submitting Manual Form', function() {
 
 describe('Submitting CSV File', function() {
   let cookies;
-  it('Setting up cookies', function(done) {
-    request(app)
-      .get('/')
-      .end(function(err, res) {
-        if (err) done(err);
-        cookies = res.headers['set-cookie'].pop().split(';')[0];
+  it('Getting Cookies', function(done) {
+    getCookies(function(err, freshCookies) {
+      if (err) {
+        done(err);
+      }
+      else {
+        cookies = freshCookies;
         done();
-      });
+      }
+    });
   });
   it('Should require a file', function(done) {
     let req = request(app).post('/submit/upload');
@@ -359,13 +365,25 @@ describe('Submitting CSV File', function() {
   it('Partially correct CSV file should have some errors', function(done) {
     let req = request(app).post('/submit/upload');
     req.cookies = cookies;
-    let path = __dirname+'/test-submission.csv';
+    let path = __dirname+'/bad-submission.csv';
     req.attach('mosquitoFile', path)
     .end(function(err, res) {
       if (err) throw err;
       assert.equal(res.body.status, 202, "Should accept valid csv file");
       assert.isNotNull(res.body.errors, "Some errors were found in csv file");
       assert.equal(res.body.errors.length, 3, "Exactly 3 errors in csv file");
+      done();
+    });
+  });
+  it('Fully correct CSV file should not have errors', function(done) {
+    let req = request(app).post('/submit/upload');
+    req.cookies = cookies;
+    let path = __dirname+'/good-submission.csv';
+    req.attach('mosquitoFile', path)
+    .end(function(err, res) {
+      if (err) throw err;
+      assert.equal(res.body.status, 202, "Should accept valid csv file");
+      assert.equal(res.body.errors.length, 0, "Exactly 0 errors in csv file");
       done();
     });
   });

@@ -2,7 +2,14 @@
 
 angular.module('mosquitoApp', []).run(function($rootScope, $http, $window) {
 
-  $rootScope.server = location.protocol + '//' + location.hostname + ':' + location.port;
+  var isLive = false; // change if on server
+
+  if (isLive === true) {
+    $rootScope.server = 'https://zodo.asu.edu/mosquito';
+  }
+  else {
+    $rootScope.server = location.protocol + '//' + location.hostname + ':' + location.port;
+  }
 
   $rootScope.logout = function() {
     $http.delete($rootScope.server+'/account/logout')

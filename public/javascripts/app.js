@@ -12,12 +12,13 @@ angular.module('mosquitoApp', []).run(function($rootScope, $http, $window) {
   }
 
   $rootScope.logout = function() {
-    $http.delete($rootScope.server+'/account/logout')
-    .success(function(response) {
-      $window.location.href = $rootScope.server+'/';
-    })
-    .error(function(response) {
-      console.log("Failed to log out: ", response);
+    $http.delete($rootScope.server+'/account/logout').then(function(response) {
+      if (response.status === 200) {
+        $window.location.href = $rootScope.server+'/';
+      }
+      else {
+        console.log("Failed to log out: ", response);
+      }
     });
   };
 

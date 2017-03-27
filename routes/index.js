@@ -7,6 +7,7 @@ let redis_tool = require('../bin/redis_tool');
 let session_tool = require('../bin/session_tool');
 const mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
 let checkInput = require('../bin/validator_tool').checkInput;
+let logger = require('../bin/logging_tool');
 
 const state_re = /^[a-zA-Z]{2}$/;
 
@@ -18,7 +19,7 @@ router.get('/', function(req, res) {
     res.status(200).render('home', {user: req.session.user});
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).render('error');
   }
 });
@@ -44,7 +45,7 @@ router.get('/states', function(req, res) {
     });
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"
@@ -85,7 +86,7 @@ router.get('/counties/:state', function(req, res) {
     }
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"
@@ -115,7 +116,7 @@ router.get('/species', function(req, res) {
     });
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"
@@ -145,7 +146,7 @@ router.get('/traps', function(req, res) {
     });
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"
@@ -287,7 +288,7 @@ router.get('/query', function(req, res) {
     }
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"

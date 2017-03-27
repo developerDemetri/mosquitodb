@@ -8,19 +8,19 @@
     <script type="text/javascript" src="javascripts/submit.js"></script>
   </head>
   <%- include('navbar'); %>
-  <body ng-app="mosquitoApp" ng-controller="submitController" ng-cloak>
+  <body ng-app="mosquitoApp" ng-controller="submitController" ng-cloak ng-keypress="handleEnter($event)">
     <div class="container">
       <div class="row">
         <h1 class="text-center col-md-10 col-md-offset-1">Submit Data</h1>
         <p class="text-center col-md-1"><button class="btn btn-info btn-sm" id="submission-type" ng-click="toggleUpload();"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> <span id="toggle-label">Upload File</span></button></p>
       </div>
-      <div id="error-alert" class="alert alert-warning col-md-10 col-md-offset-1 text-center hidden" ng-show="error">
+      <div id="error-alert" class="alert alert-warning col-md-10 col-md-offset-1 text-center" ng-show="error">
         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{error}}
       </div>
-      <div id="success-alert" class="alert alert-success col-md-10 col-md-offset-1 text-center hidden" ng-show="was_successful">
+      <div id="success-alert" class="alert alert-success col-md-10 col-md-offset-1 text-center" ng-show="was_successful">
         <i class="fa fa-check-circle-o" aria-hidden="true"></i> {{success_message}}
       </div>
-      <div ng-hide="upload" class="manual-form hidden">
+      <div ng-hide="upload" class="manual-form">
         <div class="row">
           <div class="col-md-2 col-md-offset-1">
             <label for="year">Year*</label>
@@ -93,7 +93,7 @@
           </div>
         </div>
       </div>
-      <div ng-hide="!upload" class="upload-form hidden">
+      <div ng-show="upload" class="upload-form">
         <div class="row">
           <div class="col-md-5 col-md-offset-3">
             <label class="btn btn-default btn-file"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> Select File<input id="data-upload" type="file"></label>
@@ -103,7 +103,7 @@
             <button class="btn btn-success pull-left" ng-click="submitFile();">Submit File</button>
           </div>
         </div>
-        <div id="upload_results" class="row hidden">
+        <div id="upload_results" class="row">
           <h3 class="text-center">File Errors:</h3>
           <div ng-cloak class="col-md-6 col-md-offset-3" ng-repeat="error in file_errors">
             <p class="text-danger">Error on Line {{error.line}} : {{error.error}}</p>

@@ -4,6 +4,7 @@ let express = require('express');
 let app = require('../app');
 let request = require('supertest');
 let assert = require('chai').assert;
+let getCookies = require('./test_tool').getCookies;
 
 describe('Should not allow cross-site calls', function() {
   it('Should not get states', function(done) {

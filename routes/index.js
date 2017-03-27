@@ -15,33 +15,11 @@ let router = express.Router();
 router.get('/', function(req, res) {
   try {
     req.session.mdb_key = mdb_key;
-    res.render('home');
+    res.status(200).render('home', {user: req.session.user});
   }
   catch (error) {
     console.log(error);
-    res.render('error');
-  }
-});
-
-router.get('/about', function(req, res) {
-  try {
-    req.session.mdb_key = mdb_key;
-    res.render('about');
-  }
-  catch (error) {
-    console.log(error);
-    res.render('error');
-  }
-});
-
-router.get('/api', function(req, res) {
-  try {
-    req.session.mdb_key = mdb_key;
-    res.render('api');
-  }
-  catch (error) {
-    console.log(error);
-    res.render('error');
+    res.status(500).render('error');
   }
 });
 
@@ -307,7 +285,7 @@ router.get('/query', function(req, res) {
       if (errors) {
         result = {
           "status": 400,
-          "error": 'Invalide Query Option(s): ' + errors.trim()
+          "error": 'Invalid Query Option(s): ' + errors.trim()
         };
         res.status(result.status).send(result);
       }
@@ -360,6 +338,28 @@ router.get('/query', function(req, res) {
       "error": "Server Error"
     }
     res.status(result.status).send(result);
+  }
+});
+
+router.get('/about', function(req, res) {
+  try {
+    req.session.mdb_key = mdb_key;
+    res.status(200).render('about', {user: req.session.user});
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).render('error');
+  }
+});
+
+router.get('/api', function(req, res) {
+  try {
+    req.session.mdb_key = mdb_key;
+    res.status(200).render('api', {user: req.session.user});
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).render('error');
   }
 });
 

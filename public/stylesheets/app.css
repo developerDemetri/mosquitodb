@@ -16,11 +16,13 @@ body {
 .navbar-centered .navbar-nav > li {
     float: none;
 }
-.navbar-centered .nav > li {
+
+.navbar-centered .nav > li, .navbar-centered .nav > li > a, .inline-nav {
     display: inline;
 }
-.navbar-centered .nav > li > a {
-    display: inline-block;
+
+.navbar-header {
+  width: 100%;
 }
 
 .navbar {
@@ -51,4 +53,12 @@ label {
 
 .home-select {
   width: 15rem !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.logout-text {
+  font-size: 1.5rem;
 }

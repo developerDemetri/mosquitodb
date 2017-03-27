@@ -18,6 +18,7 @@ let fs = require('fs');
 let csv = require('csv-parse');
 let async_loop = require('node-async-loop');
 
+const name_re = /^\w{3,63}?$/;
 const state_re = /^[a-zA-Z]{2}$/;
 const comment_re = /^(\w| |-|@|!|&|\(|\)|#|_|\+|%|\^|\$|\*|'|\"|\?|\.)*$/;
 const file_re = /^\w(\w|-|\.| ){0,250}\.csv$/;
@@ -25,21 +26,29 @@ const base_error = 'Invalid Parameter(s): ';
 
 let router = express.Router();
 
+function isAuthorized(req) {
+  return (req.session.mdb_key === mdb_key && checkInput(req.session.user, 'string', name_re));
+};
+
 router.get('/', function(req, res) {
   try {
-    req.session.mdb_key = mdb_key;
-    res.render('submit');
+    if (isAuthorized(req)) {
+      res.status(200).render('submit', {user: req.session.user});
+    }
+    else {
+      res.status(302).redirect('/account');
+    }
   }
   catch (error) {
     console.log(error);
-    res.render('error');
+    res.status(500).render('error');
   }
 });
 
 router.post('/', function(req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
+    if (isAuthorized(req)) {
       if (checkInput(req.body.year,'number',null) && checkInput(req.body.state,'string',state_re) && checkInput(req.body.county,'number',null) && checkInput(req.body.species,'number',null) && checkInput(req.body.trap,'number',null) && checkInput(req.body.wnv_results,'number',null) && checkInput(req.body.pools,'number',null)) {
         let errs = base_error;
         let curr_date = new Date();
@@ -117,8 +126,8 @@ router.post('/', function(req, res) {
           }
         }
         if (errs === base_error) {
-          pg_tool.query('insert_collection', [year,month,week,state,county,trap,species,pools,individuals,nights,wnv,comment], function(error, rows) {
-            if (error) {
+          startNewBatch(req.session.user, function (err, id) {
+            if (err) {
               result = {
                 "status": 500,
                 "error": 'Server Error'
@@ -126,11 +135,22 @@ router.post('/', function(req, res) {
               res.status(result.status).send(result);
             }
             else {
-              result = {
-                "status": 201,
-                "message": "Collection Successfully Submitted"
-              }
-              res.status(result.status).send(result);
+              pg_tool.query('insert_collection', [year,month,week,state,county,trap,species,pools,individuals,nights,wnv,comment,id], function(error, rows) {
+                if (error) {
+                  result = {
+                    "status": 500,
+                    "error": 'Server Error'
+                  };
+                  res.status(result.status).send(result);
+                }
+                else {
+                  result = {
+                    "status": 201,
+                    "message": "Collection Successfully Submitted"
+                  }
+                  res.status(result.status).send(result);
+                }
+              });
             }
           });
         }
@@ -193,7 +213,7 @@ router.post('/', function(req, res) {
 router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
+    if (isAuthorized(req)) {
       if (req.file) {
         if (file_re.test(req.file.originalname)) {
           let submissions = [];
@@ -323,7 +343,7 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
           })
           .on('end',function() {
             console.log('done reading csv');
-            processSubmissions(submissions, function(errs) {
+            processSubmissions(req.session.user, submissions, function(errs) {
               for (let i = 0; i < errs.length; i++) {
                 errors.push(errs[i]);
               }
@@ -378,36 +398,89 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
   }
 });
 
-function processSubmissions(submissions, callback) {
+function processSubmissions(user, submissions, callback) {
   let errors = [];
-  async_loop(submissions, function (submission, next) {
-    if (submission) {
-      try {
-        pg_tool.query('insert_collection', [submission.year,submission.month,submission.week,submission.state,submission.county,submission.trap,submission.species,submission.pools,submission.individuals,submission.nights,submission.wnv,submission.comment], function(error, rows) {
-          if (error) {
+  startNewBatch(user, function (err, id) {
+    if (err) {
+      errors.push('ERROR Processing Submission');
+      callback(errors);
+    }
+    else {
+      const BATCH_ID = Number(id);
+      async_loop(submissions, function (submission, next) {
+        if (submission) {
+          try {
+            pg_tool.query('insert_collection', [submission.year,submission.month,submission.week,submission.state,submission.county,submission.trap,submission.species,submission.pools,submission.individuals,submission.nights,submission.wnv,submission.comment,BATCH_ID], function(error, rows) {
+              if (error) {
+                console.log('CSV Insertion Error: ',error);
+                let err = {
+                  "line": submission.line,
+                  "error": 'Database Error'
+                };
+                errors.push(err);
+              }
+              next();
+            });
+          }
+          catch (error) {
             console.log('CSV Insertion Error: ',error);
             let err = {
               "line": submission.line,
               "error": 'Database Error'
             };
             errors.push(err);
+            rollbackSubmission(BATCH_ID, user);
+            callback(errors);
           }
-          next();
-        });
-      }
-      catch (error) {
-        console.log('CSV Insertion Error: ',error);
-        let err = {
-          "line": submission.line,
-          "error": 'Database Error'
-        };
-        errors.push(err);
-        next();
-      }
+        }
+      }, function () {
+        if (errors.length > 0) {
+          rollbackSubmission(BATCH_ID, user);
+        }
+        callback(errors);
+      });
     }
-  }, function () {
-    callback(errors);
   });
+};
+
+function startNewBatch(user, callback) {
+  try {
+    pg_tool.query('insert_batch', [user], function(error, rows) {
+      if (error) {
+        console.log('failed to start batch: ', error);
+        callback(error, null);
+      }
+      else {
+        callback(null, rows[0].id);
+      }
+    });
+  }
+  catch (err) {
+    console.log('failed to start batch: ', err);
+    callback(err, null);
+  }
 }
+
+function rollbackSubmission(batch_id, user) {
+  try {
+    console.log('rolling back submission for batch: ', batch_id);
+    if (checkInput(user, 'string', name_re)) {
+      pg_tool.query('rollback_batch', [batch_id, user], function(error, rows) {
+        if (error) {
+          console.log('failed rollback: ', err);
+        }
+        else {
+          console.log('successful rollback of batch: ', batch_id);
+        }
+      });
+    }
+    else {
+      console.log('aborted rollback for invalid user ', user);
+    }
+  }
+  catch (err) {
+    console.log('failed rollback: ', err);
+  }
+};
 
 module.exports = router;

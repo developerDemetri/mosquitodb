@@ -43,19 +43,11 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $('#toggle-icon').removeClass('fa-keyboard-o');
       $('#toggle-icon').addClass('fa-upload');
     }
-  }
+  };
 
-  function unhideElements() {
-    $('.manual-form').removeClass('hidden');
-    $('.upload-form').removeClass('hidden');
-    $('#error-alert').removeClass('hidden');
-    $('#success-alert').removeClass('hidden');
-    setupFileUploader();
-  }
+  setupFileUploader();
 
-  unhideElements();
-
-  $http.get(getServer()+'/states').then(function(response) {
+  $http.get($scope.server+'/states').then(function(response) {
     if (response.data.status === 200) {
       $('#state').selectpicker();
       $scope.states = response.data.states;
@@ -68,7 +60,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     }
   });
 
-  $http.get(getServer()+'/species').then(function(response) {
+  $http.get($scope.server+'/species').then(function(response) {
     if (response.data.status === 200) {
       $('#species').selectpicker();
       $scope.species = response.data.species;
@@ -81,7 +73,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     }
   });
 
-  $http.get(getServer()+'/traps').then(function(response) {
+  $http.get($scope.server+'/traps').then(function(response) {
     if (response.data.status === 200) {
       $('#trap').selectpicker();
       $scope.traps = response.data.traps;
@@ -95,7 +87,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   });
 
   function populateCounties() {
-    $http.get(getServer()+'/counties/'+$scope.state).then(function(response) {
+    $http.get($scope.server+'/counties/'+$scope.state).then(function(response) {
       if (response.data.status === 200) {
         $('#county').selectpicker();
         $scope.counties = response.data.counties;
@@ -107,7 +99,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         console.log(response.data.error);
       }
     });
-  }
+  };
 
   $scope.$watch('state', function(newvalue, oldvalue) {
     if (newvalue) {
@@ -119,9 +111,9 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     $scope.was_successful = false;
     var state_re = /^[a-zA-Z]{2}$/;
     var comment_re = /^(\w| |-|@|!|&|\(|\)|#|_|\+|%|\^|\$|\*|'|\"|\?|\.)*$/;
-    if (checkInput($scope.year,'number',null) && checkInput($scope.state,'string',state_re) && checkInput($scope.county,'number',null) && checkInput($scope.spec,'number',null) && checkInput($scope.trap,'number',null) && checkInput($scope.pools,'number',null) && checkInput($scope.wnv_results,'number',null)) {
+    if ($scope.checkInput($scope.year,'number',null) && $scope.checkInput($scope.state,'string',state_re) && $scope.checkInput($scope.county,'number',null) && $scope.checkInput($scope.spec,'number',null) && $scope.checkInput($scope.trap,'number',null) && $scope.checkInput($scope.pools,'number',null) && $scope.checkInput($scope.wnv_results,'number',null)) {
       $scope.error = null;
-      if (!$scope.comment || checkInput($scope.comment,'string',comment_re)) {
+      if (!$scope.comment || $scope.checkInput($scope.comment,'string',comment_re)) {
         var sumbmission = {
           "year": $scope.year,
           "month": $scope.month,
@@ -138,7 +130,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         };
         $.ajax({
           type: "POST",
-          url: getServer()+'/submit',
+          url: $scope.server+'/submit',
           data: sumbmission,
           success: function(data) {
             if (data.status === 201) {
@@ -160,29 +152,29 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     }
     else {
       $scope.error = 'Invalid Fields: ';
-      if (!checkInput($scope.year,'number',null)) {
+      if (!$scope.checkInput($scope.year,'number',null)) {
         $scope.error += 'Year ';
       }
-      if (!checkInput($scope.state,'string',state_re)) {
+      if (!$scope.checkInput($scope.state,'string',state_re)) {
         $scope.error += 'State ';
       }
-      if (!checkInput($scope.county,'number',null)) {
+      if (!$scope.checkInput($scope.county,'number',null)) {
         $scope.error += 'County ';
       }
-      if (!checkInput($scope.spec,'number',null)) {
+      if (!$scope.checkInput($scope.spec,'number',null)) {
         $scope.error += 'Species ';
       }
-      if (!checkInput($scope.trap,'number',null)) {
+      if (!$scope.checkInput($scope.trap,'number',null)) {
         $scope.error += 'Trap ';
       }
-      if (!checkInput($scope.pools,'number',null)) {
+      if (!$scope.checkInput($scope.pools,'number',null)) {
         $scope.error += 'Pools ';
       }
-      if (!checkInput($scope.wnv_results,'number',null)) {
+      if (!$scope.checkInput($scope.wnv_results,'number',null)) {
         $scope.error += 'WNV_Results ';
       }
     }
-  }
+  };
 
   function clearForm() {
     $scope.was_successful = true;
@@ -201,7 +193,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     $timeout(function() {
       $('.selectpicker').selectpicker('val','');
     }, 1);
-  }
+  };
 
   function setupFileUploader() {
     $(document).on('change', ':file', function() {
@@ -213,7 +205,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $('#filename-label').html($scope.filename);
       $scope.fileToSend = input.get(0).files[0];
     });
-  }
+  };
 
   $scope.submitFile = function() {
     $scope.was_successful = false;
@@ -225,14 +217,13 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
         var formData = new FormData();
         formData.append('mosquitoFile', $scope.fileToSend);
         $.ajax({
-            url: getServer()+'/submit/upload',
+            url: $scope.server+'/submit/upload',
             data: formData,
             type: 'POST',
             contentType: false,
             processData: false,
             success: function(data) {
               if (data.status === 202) {
-                $('#upload_results').removeClass('hidden');
                 $scope.error = null;
                 $scope.fileToSend = null;
                 $scope.filename = 'none';
@@ -254,6 +245,17 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
     else {
       $scope.error = 'Please Select a File';
     }
-  }
+  };
+
+  $scope.handleEnter = function(keyEvent) {
+    if (keyEvent.which === 13) {
+      if ($scope.upload) {
+        $scope.submitFile();
+      }
+      else {
+        $scope.submitData();
+      }
+    }
+  };
 
 });

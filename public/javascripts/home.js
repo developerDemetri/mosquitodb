@@ -11,11 +11,7 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
   $scope.county = null;
   $scope.spec = null;
 
-  $scope.results = [];
-
-  function setup() {
-
-  }
+  $scope.results = null;
 
   $scope.search = function() {
     var query_params = {
@@ -29,23 +25,17 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
      params: query_params,
      headers : {'Accept' : 'application/json'}
     };
-    $http.get(getServer()+'/query', config).then(function(response) {
+    $http.get($scope.server+'/query', config).then(function(response) {
       if (response.data.status === 200) {
         $scope.results = response.data.results;
-        $('#search-results').removeClass('hidden');
       }
       else {
         console.log(response.data.error);
       }
     });
-
   }
 
-  function backToOptions() {
-    $scope.searching = true;
-  }
-
-  $http.get(getServer()+'/states').then(function(response) {
+  $http.get($scope.server+'/states').then(function(response) {
     if (response.data.status === 200) {
       $('#state').selectpicker();
       $scope.states = response.data.states;
@@ -58,7 +48,7 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
     }
   });
 
-  $http.get(getServer()+'/species').then(function(response) {
+  $http.get($scope.server+'/species').then(function(response) {
     if (response.data.status === 200) {
       $('#species').selectpicker();
       $scope.species = response.data.species;
@@ -75,7 +65,7 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
     if (Array.isArray($scope.state)) {
       $scope.counties = [];
       for (var i = 0; i < $scope.state.length; i++) {
-        $http.get(getServer()+'/counties/'+$scope.state[i]).then(function(response) {
+        $http.get($scope.server+'/counties/'+$scope.state[i]).then(function(response) {
           if (response.data.status === 200) {
             $('#county').selectpicker();
             $scope.counties.push.apply($scope.counties, response.data.counties);
@@ -90,7 +80,7 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
       }
     }
     else {
-      $http.get(getServer()+'/counties/'+$scope.state).then(function(response) {
+      $http.get($scope.server+'/counties/'+$scope.state).then(function(response) {
         if (response.data.status === 200) {
           $('#county').selectpicker();
           $scope.counties = response.data.counties;
@@ -110,5 +100,11 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
       populateCounties();
     }
   });
+
+  $scope.handleEnter = function(keyEvent) {
+    if (keyEvent.which === 13) {
+      $scope.search();
+    }
+  };
 
 });

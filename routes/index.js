@@ -341,26 +341,4 @@ router.get('/query', function(req, res) {
   }
 });
 
-router.get('/about', function(req, res) {
-  try {
-    req.session.mdb_key = mdb_key;
-    res.status(200).render('about', {user: req.session.user});
-  }
-  catch (error) {
-    console.log(error);
-    res.status(500).render('error');
-  }
-});
-
-router.get('/api', function(req, res) {
-  try {
-    req.session.mdb_key = mdb_key;
-    res.status(200).render('api', {user: req.session.user});
-  }
-  catch (error) {
-    console.log(error);
-    res.status(500).render('error');
-  }
-});
-
 module.exports = router;

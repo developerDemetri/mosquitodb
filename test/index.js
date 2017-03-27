@@ -6,59 +6,6 @@ let request = require('supertest');
 let assert = require('chai').assert;
 let getCookies = require('./test_tool').getCookies;
 
-describe('Should not allow cross-site calls', function() {
-  it('Should not get states', function(done) {
-    request(app)
-    .get('/states')
-    .end(function(err, res) {
-      if (err) done(err);
-      assert.isUndefined(res.body.states);
-      assert.equal(res.body.status, 401, "denies states");
-      done();
-    });
-  });
-  it('Should not get counties', function(done) {
-    request(app)
-    .get('/counties/AZ')
-    .end(function(err, res) {
-      if (err) done(err);
-      assert.isUndefined(res.body.counties);
-      assert.equal(res.body.status, 401, "denies counties");
-      done();
-    });
-  });
-  it('Should not get species', function(done) {
-    request(app)
-    .get('/species')
-    .end(function(err, res) {
-      if (err) done(err);
-      assert.isUndefined(res.body.species);
-      assert.equal(res.body.status, 401, "denies species");
-      done();
-    });
-  });
-  it('Should not get traps', function(done) {
-    request(app)
-    .get('/traps')
-    .end(function(err, res) {
-      if (err) done(err);
-      assert.isUndefined(res.body.traps);
-      assert.equal(res.body.status, 401, "denies traps");
-      done();
-    });
-  });
-  it('Should not run search', function(done) {
-    request(app)
-    .get('/query')
-    .end(function(err, res) {
-      if (err) done(err);
-      assert.isUndefined(res.body.traps);
-      assert.equal(res.body.status, 401, "denies search");
-      done();
-    });
-  });
-});
-
 describe('Allowed Value Retreival', function() {
   let cookies;
   it('Setting up cookies', function(done) {

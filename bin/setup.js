@@ -4,7 +4,8 @@ let pg_tool = require('./pg_tool');
 let async_loop = require('node-async-loop');
 
 const allowed_values = require('./allowed_values');
-const counties_list = require('./county_parser').crawl();
+const counties_list = require('./counties');
+
 
 function createSchema() {
   console.log('Creating Schema...');

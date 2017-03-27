@@ -26,31 +26,22 @@ router.get('/', function(req, res) {
 router.get('/states', function(req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
-      pg_tool.query('get_states', [], function(error, rows) {
-        if (error) {
-          result = {
-            "status": 500,
-            "error": 'Server Error'
-          };
-          res.status(result.status).send(result);
-        }
-        else {
-          result = {
-            "status": 200,
-            "states": rows
-          };
-          res.status(result.status).send(result);
-        }
-      });
-    }
-    else {
-      result = {
-        "status": 401,
-        "error": 'Unauthorized Request'
-      };
-      res.status(result.status).send(result);
-    }
+    pg_tool.query('get_states', [], function(error, rows) {
+      if (error) {
+        result = {
+          "status": 500,
+          "error": 'Server Error'
+        };
+        res.status(result.status).send(result);
+      }
+      else {
+        result = {
+          "status": 200,
+          "states": rows
+        };
+        res.status(result.status).send(result);
+      }
+    });
   }
   catch (error) {
     console.log(error);
@@ -65,39 +56,30 @@ router.get('/states', function(req, res) {
 router.get('/counties/:state', function(req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
-      if (checkInput(req.params.state,'string',state_re)) {
-        let state = req.params.state + '';
-        state = state.toUpperCase();
-        pg_tool.query('get_counties', [state], function(error, rows) {
-          if (error) {
-            result = {
-              "status": 500,
-              "error": 'Server Error'
-            };
-            res.status(result.status).send(result);
-          }
-          else {
-            result = {
-              "status": 200,
-              "counties": rows
-            };
-            res.status(result.status).send(result);
-          }
-        });
-      }
-      else {
-        result = {
-          "status": 400,
-          "error": 'Invalid State Code'
-        };
-        res.status(result.status).send(result);
-      }
+    if (checkInput(req.params.state,'string',state_re)) {
+      let state = req.params.state + '';
+      state = state.toUpperCase();
+      pg_tool.query('get_counties', [state], function(error, rows) {
+        if (error) {
+          result = {
+            "status": 500,
+            "error": 'Server Error'
+          };
+          res.status(result.status).send(result);
+        }
+        else {
+          result = {
+            "status": 200,
+            "counties": rows
+          };
+          res.status(result.status).send(result);
+        }
+      });
     }
     else {
       result = {
-        "status": 401,
-        "error": 'Unauthorized Request'
+        "status": 400,
+        "error": 'Invalid State Code'
       };
       res.status(result.status).send(result);
     }
@@ -115,31 +97,22 @@ router.get('/counties/:state', function(req, res) {
 router.get('/species', function(req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
-      pg_tool.query('get_species', [], function(error, rows) {
-        if (error) {
-          result = {
-            "status": 500,
-            "error": 'Server Error'
-          };
-          res.status(result.status).send(result);
-        }
-        else {
-          result = {
-            "status": 200,
-            "species": rows
-          };
-          res.status(result.status).send(result);
-        }
-      });
-    }
-    else {
-      result = {
-        "status": 401,
-        "error": 'Unauthorized Request'
-      };
-      res.status(result.status).send(result);
-    }
+    pg_tool.query('get_species', [], function(error, rows) {
+      if (error) {
+        result = {
+          "status": 500,
+          "error": 'Server Error'
+        };
+        res.status(result.status).send(result);
+      }
+      else {
+        result = {
+          "status": 200,
+          "species": rows
+        };
+        res.status(result.status).send(result);
+      }
+    });
   }
   catch (error) {
     console.log(error);
@@ -154,31 +127,22 @@ router.get('/species', function(req, res) {
 router.get('/traps', function(req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
-      pg_tool.query('get_traps', [], function(error, rows) {
-        if (error) {
-          result = {
-            "status": 500,
-            "error": 'Server Error'
-          };
-          res.status(result.status).send(result);
-        }
-        else {
-          result = {
-            "status": 200,
-            "traps": rows
-          };
-          res.status(result.status).send(result);
-        }
-      });
-    }
-    else {
-      result = {
-        "status": 401,
-        "error": 'Unauthorized Request'
-      };
-      res.status(result.status).send(result);
-    }
+    pg_tool.query('get_traps', [], function(error, rows) {
+      if (error) {
+        result = {
+          "status": 500,
+          "error": 'Server Error'
+        };
+        res.status(result.status).send(result);
+      }
+      else {
+        result = {
+          "status": 200,
+          "traps": rows
+        };
+        res.status(result.status).send(result);
+      }
+    });
   }
   catch (error) {
     console.log(error);
@@ -193,142 +157,133 @@ router.get('/traps', function(req, res) {
 router.get('/query', function(req, res) {
   let result;
   try {
-    if (req.session.mdb_key === mdb_key) {
-      let start = null;
-      let end = null;
-      let states = null;
-      let counties = null;
-      let species = null;
-      let errors = '';
-      if (req.query.start) {
-        if (checkInput(req.query.start,'number',null)) {
-          start = Number(req.query.start);
-        }
-        else {
-          errors += 'start ';
-        }
+    let start = null;
+    let end = null;
+    let states = null;
+    let counties = null;
+    let species = null;
+    let errors = '';
+    if (req.query.start) {
+      if (checkInput(req.query.start,'number',null)) {
+        start = Number(req.query.start);
       }
       else {
-        start = 1900;
-      }
-      if (req.query.end) {
-        if (checkInput(req.query.end,'number',null)) {
-          end = Number(req.query.end);
-        }
-        else {
-          errors += 'end ';
-        }
-      }
-      else {
-        end = 2017;
-      }
-      if (req.query.state) {
-        states = [];
-        if (Array.isArray(req.query.state) && req.query.state.length > 0) {
-          for (let i = 0; i < req.query.state.length; i++) {
-            if (checkInput(req.query.state[i],'string',state_re)) {
-              states.push((req.query.state[i] + '').trim());
-            }
-            else {
-              errors += 'state ';
-              i = req.query.state.length;
-            }
-          }
-        }
-        else if (checkInput(req.query.state,'string',state_re)) {
-          states.push((req.query.state + '').trim());
-        }
-        else {
-          errors += 'state ';
-        }
-      }
-      if (req.query.county) {
-        counties = [];
-        if (Array.isArray(req.query.county) && req.query.county.length > 0) {
-          for (let i = 0; i < req.query.county.length; i++) {
-            if (checkInput(req.query.county[i],'number',null)) {
-              counties.push(Number(req.query.county[i]));
-            }
-            else {
-              errors += 'county ';
-              i = req.query.county.length;
-            }
-          }
-        }
-        else if (checkInput(req.query.county,'number',null)) {
-          counties.push(Number(req.query.county));
-        }
-        else {
-          errors += 'county ';
-        }
-      }
-      if (req.query.species) {
-        species = [];
-        if (Array.isArray(req.query.species) && req.query.species.length > 0) {
-          for (let i = 0; i < req.query.species.length; i++) {
-            if (checkInput(req.query.species[i],'number',null)) {
-              species.push(Number(req.query.species[i]));
-            }
-            else {
-              errors += 'species ';
-              i = req.query.species.length;
-            }
-          }
-        }
-        else if (checkInput(req.query.species,'number',null)) {
-          species.push(Number(req.query.species));
-        }
-        else {
-          errors += 'species ';
-        }
-      }
-      if (errors) {
-        result = {
-          "status": 400,
-          "error": 'Invalid Query Option(s): ' + errors.trim()
-        };
-        res.status(result.status).send(result);
-      }
-      else {
-        let query = 'search_by_dates';
-        let params = [start,end];
-        if (states) {
-          query += ' states';
-          params.push(states);
-        }
-        if (counties) {
-          query += ' counties';
-          params.push(counties);
-        }
-        if (species) {
-          query += ' species';
-          params.push(species);
-        }
-        query = query.trim().replace(/ /g, "_");
-        pg_tool.query(query, params, function(error, rows) {
-          if (error) {
-            result = {
-              "status": 500,
-              "error": 'Server Error'
-            };
-            res.status(result.status).send(result);
-          }
-          else {
-            result = {
-              "status": 200,
-              "results": rows
-            }
-            res.status(result.status).send(result);
-          }
-        });
+        errors += 'start ';
       }
     }
     else {
+      start = 1900;
+    }
+    if (req.query.end) {
+      if (checkInput(req.query.end,'number',null)) {
+        end = Number(req.query.end);
+      }
+      else {
+        errors += 'end ';
+      }
+    }
+    else {
+      end = 2017;
+    }
+    if (req.query.state) {
+      states = [];
+      if (Array.isArray(req.query.state) && req.query.state.length > 0) {
+        for (let i = 0; i < req.query.state.length; i++) {
+          if (checkInput(req.query.state[i],'string',state_re)) {
+            states.push((req.query.state[i] + '').trim());
+          }
+          else {
+            errors += 'state ';
+            i = req.query.state.length;
+          }
+        }
+      }
+      else if (checkInput(req.query.state,'string',state_re)) {
+        states.push((req.query.state + '').trim());
+      }
+      else {
+        errors += 'state ';
+      }
+    }
+    if (req.query.county) {
+      counties = [];
+      if (Array.isArray(req.query.county) && req.query.county.length > 0) {
+        for (let i = 0; i < req.query.county.length; i++) {
+          if (checkInput(req.query.county[i],'number',null)) {
+            counties.push(Number(req.query.county[i]));
+          }
+          else {
+            errors += 'county ';
+            i = req.query.county.length;
+          }
+        }
+      }
+      else if (checkInput(req.query.county,'number',null)) {
+        counties.push(Number(req.query.county));
+      }
+      else {
+        errors += 'county ';
+      }
+    }
+    if (req.query.species) {
+      species = [];
+      if (Array.isArray(req.query.species) && req.query.species.length > 0) {
+        for (let i = 0; i < req.query.species.length; i++) {
+          if (checkInput(req.query.species[i],'number',null)) {
+            species.push(Number(req.query.species[i]));
+          }
+          else {
+            errors += 'species ';
+            i = req.query.species.length;
+          }
+        }
+      }
+      else if (checkInput(req.query.species,'number',null)) {
+        species.push(Number(req.query.species));
+      }
+      else {
+        errors += 'species ';
+      }
+    }
+    if (errors) {
       result = {
-        "status": 401,
-        "error": 'Unauthorized Request'
+        "status": 400,
+        "error": 'Invalid Query Option(s): ' + errors.trim()
       };
       res.status(result.status).send(result);
+    }
+    else {
+      let query = 'search_by_dates';
+      let params = [start,end];
+      if (states) {
+        query += ' states';
+        params.push(states);
+      }
+      if (counties) {
+        query += ' counties';
+        params.push(counties);
+      }
+      if (species) {
+        query += ' species';
+        params.push(species);
+      }
+      query = query.trim().replace(/ /g, "_");
+      pg_tool.query(query, params, function(error, rows) {
+        if (error) {
+          result = {
+            "status": 500,
+            "error": 'Server Error'
+          };
+          res.status(result.status).send(result);
+        }
+        else {
+          result = {
+            "status": 200,
+            "results": rows
+          }
+          res.status(result.status).send(result);
+        }
+      });
     }
   }
   catch (error) {
@@ -338,28 +293,6 @@ router.get('/query', function(req, res) {
       "error": "Server Error"
     }
     res.status(result.status).send(result);
-  }
-});
-
-router.get('/about', function(req, res) {
-  try {
-    req.session.mdb_key = mdb_key;
-    res.status(200).render('about', {user: req.session.user});
-  }
-  catch (error) {
-    console.log(error);
-    res.status(500).render('error');
-  }
-});
-
-router.get('/api', function(req, res) {
-  try {
-    req.session.mdb_key = mdb_key;
-    res.status(200).render('api', {user: req.session.user});
-  }
-  catch (error) {
-    console.log(error);
-    res.status(500).render('error');
   }
 });
 

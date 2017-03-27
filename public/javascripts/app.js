@@ -2,15 +2,23 @@
 
 angular.module('mosquitoApp', []).run(function($rootScope, $http, $window) {
 
-  $rootScope.server = location.protocol + '//' + location.hostname + ':' + location.port;
+  var isLive = false; // change if on server
+
+  if (isLive === true) {
+    $rootScope.server = 'https://zodo.asu.edu/mosquito';
+  }
+  else {
+    $rootScope.server = location.protocol + '//' + location.hostname + ':' + location.port;
+  }
 
   $rootScope.logout = function() {
-    $http.delete($rootScope.server+'/account/logout')
-    .success(function(response) {
-      $window.location.href = $rootScope.server+'/';
-    })
-    .error(function(response) {
-      console.log("Failed to log out: ", response);
+    $http.delete($rootScope.server+'/account/logout').then(function(response) {
+      if (response.status === 200) {
+        $window.location.href = $rootScope.server+'/';
+      }
+      else {
+        console.log("Failed to log out: ", response);
+      }
     });
   };
 

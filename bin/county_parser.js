@@ -33,3 +33,5 @@ function crawl() {
 }
 
 module.exports.crawl = crawl;
+
+//originally used to parse HTML Wikipedia page of US Counties

@@ -297,4 +297,56 @@ router.get('/query', function(req, res) {
   }
 });
 
+router.get('/collection/:id', function(req, res) {
+  let result;
+  try {
+    if (checkInput(req.params.id, 'number', null)) {
+      let id = Number(req.params.id);
+      pg_tool.query('get_collection_by_id', [id], function(error, rows) {
+        if (error) {
+          result = {
+            "status": 500,
+            "error": 'Server Error'
+          };
+          res.status(result.status).send(result);
+        }
+        else {
+          logger.info('Retrieved collection: '+id);
+          let collection = rows[0];
+          if (collection) {
+            result = {
+              "status": 200,
+              "collection": collection
+            };
+          }
+          else {
+            result = {
+              "status": 404,
+              "error": 'Collection does not exist: '+id
+            };
+          }
+          res.status(result.status).send(result);
+        }
+      });
+    }
+    else {
+      logger.warn('Invalid Collection ID requested: '+req.params.id);
+      result = {
+        "status": 400,
+        "error": "Invalid Collection ID"
+      }
+      res.status(result.status).send(result);
+    }
+  }
+  catch (error) {
+    logger.error(error);
+    result = {
+      "status": 500,
+      "error": "Server Error"
+    }
+    res.status(result.status).send(result);
+  }
+});
+
+
 module.exports = router;

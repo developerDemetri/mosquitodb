@@ -1,11 +1,11 @@
 <nav ng-app="mosquitoApp" class="navbar navbar-default navbar-static-top">
-  <div class="container-fluid">
+  <div class="container-fluid hidden-xs">
     <div class="navbar-header">
-      <a class="navbar-brand pull-left" href="{{server}}/">MosquitoDB</a>
-      <div class="inline-nav hidden-xs">
+      <a class="navbar-brand pull-left" ng-href="{{server}}/">MosquitoDB</a>
+      <div class="inline-nav">
         <div class="nav navbar-nav">
-          <li><a href="{{server}}/"><i class="fa fa-search" aria-hidden="true"></i> Search Data</a></li>
-          <li><a href="{{server}}/submit"><i class="fa fa-file-text-o" aria-hidden="true"></i> Submit Data</a></li>
+          <li class="hidden-xs"><a ng-href="{{server}}/"><i class="fa fa-search" aria-hidden="true"></i> Search Data</a></li>
+          <li><a ng-href="{{server}}/submit"><i class="fa fa-file-text-o" aria-hidden="true"></i> Submit Data</a></li>
         </div>
       </div>
       <% if (user) { %>
@@ -15,5 +15,14 @@
         <a class="navbar-brand pull-right" ng-href="{{server}}/account" >Sign In</a>
       <% } %>
     </div>
+  </div>
+  <div class="visible-xs">
+    <a class="navbar-brand pull-left" ng-href="{{server}}/">MosquitoDB</a>
+    <a class="navbar-brand pull-left" ng-href="{{server}}/submit"><i class="fa fa-file-text-o" aria-hidden="true"></i> Submit Data</a>
+    <% if (user) { %>
+      <a class="navbar-brand pull-right logout-text" href="" ng-click="logout();">Log Out</a>
+    <% } else { %>
+      <a class="navbar-brand pull-right" ng-href="{{server}}/account" >Sign In</a>
+    <% } %>
   </div>
 </nav>

@@ -9,44 +9,44 @@
   <body ng-app="mosquitoApp" ng-controller="submitController" ng-cloak ng-keypress="handleEnter($event)">
     <div class="container">
       <div class="row">
-        <h1 class="text-center col-md-10 col-md-offset-1">Submit Data</h1>
-        <p class="text-center col-md-1"><button class="btn btn-info btn-sm" id="submission-type" ng-click="toggleUpload();"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> <span id="toggle-label">Upload File</span></button></p>
+        <h1 class="text-center col-sm-10 col-sm-offset-1">Submit Data</h1>
+        <p class="text-center col-sm-1 hidden-xs"><button class="btn btn-info btn-sm" id="submission-type" ng-click="toggleUpload();"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> <span id="toggle-label">Upload File</span></button></p>
       </div>
-      <div id="error-alert" class="alert alert-warning col-md-10 col-md-offset-1 text-center" ng-show="error">
+      <div id="error-alert" class="alert alert-warning col-sm-10 col-sm-offset-1 text-center" ng-show="error">
         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{error}}
       </div>
-      <div id="success-alert" class="alert alert-success col-md-10 col-md-offset-1 text-center" ng-show="was_successful">
+      <div id="success-alert" class="alert alert-success col-sm-10 col-sm-offset-1 text-center" ng-show="was_successful">
         <i class="fa fa-check-circle-o" aria-hidden="true"></i> {{success_message}}
       </div>
       <div ng-hide="upload" class="manual-form">
         <div class="row">
-          <div class="col-md-2 col-md-offset-1">
+          <div class="col-sm-2 col-sm-offset-1">
             <label for="year">Year*</label>
             <input class="form-control" ng-model="year" type="number" min="1900" max="2017" placeholder="Year" required/>
           </div>
-          <div class="col-md-2 col-md-offset-2">
+          <div class="col-sm-2 col-sm-offset-2">
             <label for="month">Month of Year</label>
             <input class="form-control" ng-model="month"  type="number" min="1" max="12" placeholder="Month" required/>
           </div>
-          <div class="col-md-2 col-md-offset-2">
+          <div class="col-sm-2 col-sm-offset-2">
             <label for="week">Week of Year</label>
             <input class="form-control" ng-model="week" type="number" min="1" max="52" placeholder="Week" required/>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4 col-md-offset-1">
+          <div class="col-sm-4 col-sm-offset-1">
             <label for="state">State*</label>
             <select ng-model="state" ng-options="item.code as item.name for item in states" id="state" class="selectpicker" required>
               <option value="">Pick One</option>
             </select>
           </div>
-          <div class="col-md-4">
+          <div class="col-sm-4">
             <label for="county">County*</label>
             <select ng-model="county" ng-options="item.id as item.name for item in counties" id="county" class="selectpicker" required>
               <option value="">Pick One</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-sm-3">
             <label for="species">Species*</label>
             <select ng-model="spec" ng-options="item.id as item.name for item in species" id="species" class="selectpicker" required>
               <option value="">Pick One</option>
@@ -54,57 +54,85 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4 col-md-offset-1">
+          <div class="col-sm-4 col-sm-offset-1">
             <label for="trap">Trap Type*</label>
             <select id="trap" ng-model="trap" ng-options="item.id as item.name for item in traps" class="selectpicker" required>
               <option value="">Pick One</option>
             </select>
           </div>
-          <div class="col-md-2">
+          <div class="col-sm-2">
             <label for="pools">Pools*</label>
             <input class="form-control" ng-model="pools" type="number" min="1" placeholder="# Pools"/>
           </div>
-          <div class="col-md-2 col-md-offset-2">
+          <div class="col-sm-2 col-sm-offset-2">
             <label for="individuals">Individuals</label>
             <input class="form-control" ng-model="individuals" type="number" min="0" placeholder="# Individuals" required/>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-2 col-md-offset-1">
+          <div class="col-sm-2 col-sm-offset-1">
             <label for="nights">Trap Nights</label>
             <input class="form-control" ng-model="nights" type="number" min="1" placeholder="# Nights"/>
           </div>
-          <div class="col-md-2 col-md-offset-2">
+          <div class="col-sm-2 col-sm-offset-2">
             <label for="wnv-results">WNV Results*</label>
             <input class="form-control" ng-model="wnv_results" type="number" min="0" placeholder="# WNV" required/>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-10 col-md-offset-1">
+          <div class="col-sm-10 col-sm-offset-1">
             <label for="comment">Comments</label>
             <textarea ng-model="comment" class="form-control" placeholder="Additional Comments..."></textarea>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-sm-11">
             <button class="btn btn-success pull-right" ng-click="submitData();">Submit Form</button>
           </div>
         </div>
       </div>
       <div ng-show="upload" class="upload-form">
         <div class="row">
-          <div class="col-md-5 col-md-offset-3">
+          <div class="col-sm-5 col-sm-offset-3">
             <label class="btn btn-default btn-file"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> Select File<input id="data-upload" type="file"></label>
             <span id="filename-label">none</span>
           </div>
-          <div class="col-md-4">
+          <div class="col-sm-4">
             <button class="btn btn-success pull-left" ng-click="submitFile();">Submit File</button>
           </div>
         </div>
         <div id="upload_results" class="row">
           <h3 class="text-center">File Errors:</h3>
-          <div ng-cloak class="col-md-6 col-md-offset-3" ng-repeat="error in file_errors">
+          <div ng-cloak class="col-sm-6 col-sm-offset-3" ng-repeat="error in file_errors">
             <p class="text-danger">Error on Line {{error.line}} : {{error.error}}</p>
+          </div>
+        </div>
+        <div class="row" id="allowed-values">
+          <div class="text-center">
+            <h3>Check Allowed Values for File Submission</h3>
+            <select class="selectpicker col-sm-3 col-sm-offset-3" ng-model="checkVal" ng-change="loadAV();">
+              <option value="">None Selected</option>
+              <option value="species">Species</option>
+              <option value="traps">Trap Types</option>
+              <option value="counties">County By State</option>
+            </select>
+            <div ng-show="checkingCounties">
+              <select class="selectpicker col-sm-3" ng-model="checkCounty" ng-change="loadAllowedCounties();" ng-options="state.code as state.code for state in states">
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-4 col-sm-offset-4" ng-show="checkVal">
+            <table class="table table-striped">
+              <thead>
+                <th>Name</th>
+                <th>ID</th>
+              </thead>
+              <tbody>
+                <tr ng-repeat="value in allowedValues">
+                  <td>{{ value.name }}</td>
+                  <td> {{ value.id }}</td>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

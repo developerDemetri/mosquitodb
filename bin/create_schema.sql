@@ -39,7 +39,7 @@ CREATE TABLE mosquito.state (
 WITH (
   OIDS=FALSE
 );
-COMMENT ON TABLE mosquito.state IS 'US States lised by their capitalized 2 character code, such as AZ.';
+COMMENT ON TABLE mosquito.state IS 'US States listed by their capitalized 2 character code, such as AZ.';
 
 CREATE TABLE mosquito.county (
   id serial NOT NULL,

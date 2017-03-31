@@ -3,6 +3,7 @@
 let fs = require('fs');
 
 const queries = {
+  'get_collection_by_id': 'SELECT year, month, week, mosquito.collection.state_code as state, mosquito.county.name as county, mosquito.trap.name as trap, mosquito.species.name as species, pools, wnv_results FROM mosquito.collection JOIN mosquito.county ON county_id=mosquito.county.id JOIN mosquito.trap ON trap_id=mosquito.trap.id JOIN mosquito.species ON species_id=mosquito.species.id JOIN mosquito.batch ON batch_id=mosquito.batch.id WHERE mosquito.collection.id = $1 AND mosquito.batch.is_verified=true',
   'get_states': 'SELECT code, name FROM mosquito.state ORDER BY name ASC',
   'get_counties': 'SELECT id, name FROM mosquito.county WHERE state_code=$1 ORDER BY name ASC',
   'get_species': 'SELECT id, name FROM mosquito.species ORDER BY name ASC',

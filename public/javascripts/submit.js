@@ -92,6 +92,7 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $scope.states = response.data.states;
       $timeout(function() {
         $('#state').selectpicker('refresh');
+        $('#state-county-check').selectpicker('refresh');
       }, 10);
     }
     else {

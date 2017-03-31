@@ -117,7 +117,7 @@
               <option value="counties">County By State</option>
             </select>
             <div ng-show="checkingCounties">
-              <select class="selectpicker col-sm-3" ng-model="checkCounty" ng-change="loadAllowedCounties();" ng-options="state.code as state.code for state in states">
+              <select id="state-county-check" class="selectpicker col-sm-3" ng-model="checkCounty" ng-change="loadAllowedCounties();" ng-options="state.code as state.code for state in states">
               </select>
             </div>
           </div>

@@ -93,6 +93,10 @@
       </div>
       <div ng-show="upload" class="upload-form">
         <div class="row">
+          <div class="text-center">
+            <h5>Upload Format is a CSV file where each row represents a Collection:</h5>
+            <h6><b>year #,month #,week #,state code,county id,species id,trap id,# pools</b>,# individuals, # nights, # WNV, comment</h6>
+          </div>
           <div class="col-sm-5 col-sm-offset-3">
             <label class="btn btn-default btn-file"><i id='toggle-icon' class="fa fa-upload" aria-hidden="true"></i> Select File<input id="data-upload" type="file"></label>
             <span id="filename-label">none</span>
@@ -102,7 +106,7 @@
           </div>
         </div>
         <div id="upload_results" class="row">
-          <h3 class="text-center">File Errors:</h3>
+          <h3 class="text-center" ng-show="file_errors.length > 0">File Errors:</h3>
           <div ng-cloak class="col-sm-6 col-sm-offset-3" ng-repeat="error in file_errors">
             <p class="text-danger">Error on Line {{error.line}} : {{error.error}}</p>
           </div>

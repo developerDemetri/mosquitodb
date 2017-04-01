@@ -39,6 +39,34 @@
         </div>
       </div>
     </div>
+    <div id="detailsModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <h4 class="modal-title">Collection Details</h4>
+          </div>
+          <div class="">
+            <div class="col-sm-6">
+              <p><b>Year:</b> {{selectedCollection.year}}</p>
+              <p><b>Month:</b> {{selectedCollection.month || 'Not Given'}}</p>
+              <p><b>Week:</b> {{selectedCollection.week || 'Not Given'}}</p>
+              <p><b>State:</b> {{selectedCollection.state}}</p>
+              <p><b>County:</b> {{selectedCollection.county || 'Not Given'}}</p>
+            </div>
+            <div class="col-sm-6">
+              <p><b>Trap Type:</b> {{selectedCollection.trap || 'Not Given'}}</p>
+              <p><b>Species:</b> {{selectedCollection.species}}</p>
+              <p><b>Pools:</b> {{selectedCollection.pools}}</p>
+              <p><b>Individuals:</b> {{selectedCollection.individuals || 'Not Given'}}</p>
+              <p><b>WNV Results:</b> {{selectedCollection.wnv_results || 'Not Given'}}</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="search-results" class="container" ng-show="results">
       <h3 class="text-center">Results</h3>
       <div class="row">
@@ -54,7 +82,7 @@
               <th class="hidden-xs">WNV Results</th>
             </thead>
             <tbody>
-              <tr ng-repeat="r in results">
+              <tr ng-repeat="r in results" ng-click="loadDetails(r.id);">
                 <td>{{ r.year }}</td>
                 <td>{{ r.state }}</td>
                 <td>{{ r.county }}</td>

@@ -269,6 +269,10 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
                 $scope.filename = 'none';
                 $('#filename-label').html($scope.filename);
                 $scope.file_errors = data.errors;
+                if ($scope.file_errors.length < 1) {
+                  $scope.success_message = data.message;
+                  $scope.was_successful = true;
+                }
                 $scope.$apply();
               }
               else {

@@ -8,6 +8,7 @@ let redis_tool = require('../bin/redis_tool');
 let session_tool = require('../bin/session_tool');
 const mdb_key = require('../bin/secret_settings').api_settings.mdb_key;
 let checkInput = require('../bin/validator_tool').checkInput;
+let logger = require('../bin/logging_tool');
 
 const name_re = /^\w{3,63}?$/;
 const password_re = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9!@#$%^&*/._+-]{8,63}?)$/;
@@ -51,7 +52,7 @@ router.post('/auth', function(req, res) {
             }
           }
           else {
-            console.log(error);
+            logger.error(error);
             result = {
               "status": 500,
               "error": 'Server Error'
@@ -77,7 +78,7 @@ router.post('/auth', function(req, res) {
     }
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"
@@ -97,7 +98,7 @@ router.post('/register', function(req, res) {
         let email = (req.body.email + '').trim();
         pg_tool.query('create_user', [name, password, organization, email], function(error, rows) {
           if (error) {
-            console.log('ERROR creating user: ', error)
+            logger.error('ERROR creating user: ', error)
             result = {
               "status": 400,
               "error": 'Bad Request'
@@ -131,7 +132,7 @@ router.post('/register', function(req, res) {
     }
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"

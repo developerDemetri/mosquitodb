@@ -29,6 +29,45 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
   $scope.filename = null;
   $scope.file_errors = [];
 
+  $scope.checkVal = "";
+  $scope.checkCounty = 'AL';
+  $scope.allowedValues = [];
+  $scope.checkingCounties = false;
+
+  $scope.loadAV = function() {
+    $scope.checkingCounties = ($scope.checkVal === 'counties');
+    if ($scope.checkVal) {
+      if ($scope.checkVal === 'counties') {
+        $scope.checkCounty = $scope.states[0].code;
+        $scope.loadAllowedCounties();
+      }
+      else {
+        $http.get($scope.server+'/'+String($scope.checkVal)).then(function(response) {
+          if (response.data.status === 200) {
+            $scope.allowedValues = response.data[String($scope.checkVal)];
+          }
+          else {
+            console.log(response.data.error);
+          }
+        });
+      }
+    }
+    else {
+      $scope.allowedValues = [];
+    }
+  };
+
+  $scope.loadAllowedCounties = function() {
+    $http.get($scope.server+'/counties/'+String($scope.checkCounty)).then(function(response) {
+      if (response.data.status === 200) {
+        $scope.allowedValues = response.data.counties;
+      }
+      else {
+        console.log(response.data.error);
+      }
+    });
+  }
+
   $scope.toggleUpload = function() {
     $scope.upload = !$scope.upload;
     $scope.error = null;
@@ -53,7 +92,8 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
       $scope.states = response.data.states;
       $timeout(function() {
         $('#state').selectpicker('refresh');
-      }, 1);
+        $('#state-county-check').selectpicker('refresh');
+      }, 10);
     }
     else {
       console.log(response.data.error);
@@ -229,6 +269,10 @@ angular.module('mosquitoApp').controller('submitController', function ($scope, $
                 $scope.filename = 'none';
                 $('#filename-label').html($scope.filename);
                 $scope.file_errors = data.errors;
+                if ($scope.file_errors.length < 1) {
+                  $scope.success_message = data.message;
+                  $scope.was_successful = true;
+                }
                 $scope.$apply();
               }
               else {

@@ -17,6 +17,7 @@ let upload = multer({
 let fs = require('fs');
 let csv = require('csv-parse');
 let async_loop = require('node-async-loop');
+let logger = require('../bin/logging_tool');
 
 const name_re = /^\w{3,63}?$/;
 const state_re = /^[a-zA-Z]{2}$/;
@@ -31,7 +32,7 @@ function isAuthorized(req) {
     return (req.session.mdb_key === mdb_key && checkInput(req.session.user, 'string', name_re));
   }
   catch (err) {
-    console.log('Error checking authorization: '+err);
+    logger.error('Error checking authorization: '+err);
     return false;
   }
 };
@@ -46,7 +47,7 @@ router.get('/', function(req, res) {
     }
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).render('error');
   }
 });
@@ -207,7 +208,7 @@ router.post('/', function(req, res) {
     }
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"
@@ -339,7 +340,7 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
                 }
               }
               catch (err) {
-                console.log(err);
+                logger.error(err);
                 errors.push({
                   line: line_num,
                   error: 'Error Parsing Line'
@@ -348,14 +349,14 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
             }
           })
           .on('end',function() {
-            console.log('done reading csv');
+            logger.info('done reading csv');
             processSubmissions(req.session.user, submissions, function(errs) {
               for (let i = 0; i < errs.length; i++) {
                 errors.push(errs[i]);
               }
               fs.unlink(req.file.path, function(err) {
                 if (err) {
-                  console.log("Error Deleting File: ",err);
+                  logger.error("Error Deleting File: ",err);
                 }
               });
               result = {
@@ -385,7 +386,7 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
     }
     else {
       fs.unlink(req.file.path, function(err) {
-        console.log(err);
+        logger.error(err);
       });
       result = {
         "status": 401,
@@ -395,7 +396,7 @@ router.post('/upload', upload.single('mosquitoFile'), function (req, res) {
     }
   }
   catch (error) {
-    console.log(error);
+    logger.error(error);
     result = {
       "status": 500,
       "error": "Server Error"
@@ -418,7 +419,7 @@ function processSubmissions(user, submissions, callback) {
           try {
             pg_tool.query('insert_collection', [submission.year,submission.month,submission.week,submission.state,submission.county,submission.trap,submission.species,submission.pools,submission.individuals,submission.nights,submission.wnv,submission.comment,BATCH_ID], function(error, rows) {
               if (error) {
-                console.log('CSV Insertion Error: ',error);
+                logger.error('CSV Insertion Error: ',error);
                 let err = {
                   "line": submission.line,
                   "error": 'Database Error'
@@ -429,7 +430,7 @@ function processSubmissions(user, submissions, callback) {
             });
           }
           catch (error) {
-            console.log('CSV Insertion Error: ',error);
+            logger.error('CSV Insertion Error: ',error);
             let err = {
               "line": submission.line,
               "error": 'Database Error'
@@ -453,7 +454,7 @@ function startNewBatch(user, callback) {
   try {
     pg_tool.query('insert_batch', [user], function(error, rows) {
       if (error) {
-        console.log('failed to start batch: ', error);
+        logger.error('failed to start batch: ', error);
         callback(error, null);
       }
       else {
@@ -462,30 +463,30 @@ function startNewBatch(user, callback) {
     });
   }
   catch (err) {
-    console.log('failed to start batch: ', err);
+    logger.error('failed to start batch: ', err);
     callback(err, null);
   }
 }
 
 function rollbackSubmission(batch_id, user) {
   try {
-    console.log('rolling back submission for batch: ', batch_id);
+    logger.warn('rolling back submission for batch: ', batch_id);
     if (checkInput(user, 'string', name_re)) {
       pg_tool.query('rollback_batch', [batch_id, user], function(error, rows) {
         if (error) {
-          console.log('failed rollback: ', err);
+          logger.error('failed rollback: ', err);
         }
         else {
-          console.log('successful rollback of batch: ', batch_id);
+          logger.info('successful rollback of batch: ', batch_id);
         }
       });
     }
     else {
-      console.log('aborted rollback for invalid user ', user);
+      logger.error('aborted rollback for invalid user ', user);
     }
   }
   catch (err) {
-    console.log('failed rollback: ', err);
+    logger.error('failed rollback: ', err);
   }
 };
 

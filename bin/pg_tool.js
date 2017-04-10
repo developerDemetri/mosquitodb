@@ -3,9 +3,10 @@
 let pg = require('pg');
 let db_config = require('./secret_settings').db_config;
 pg.defaults.ssl = require('./secret_settings').pg_ssl;
+let logger = require('./logging_tool');
 
 let db_pool = new pg.Pool(db_config);
-console.log("connected to database");
+logger.info("connected to database");
 
 const queries = require('./queries');
 
@@ -20,7 +21,7 @@ pg_tool.query = function(query_name, params, callback) {
     if (querystring) {
       db_pool.connect(function(err, client, done) {
         if (err) {
-          console.log('error connecting to database: ', err)
+          logger.error('error connecting to database: ', err)
           error = 'error connecting to database';
           callback(error, rows);
         }
@@ -28,7 +29,7 @@ pg_tool.query = function(query_name, params, callback) {
           client.query(querystring, params, function(err, result) {
             done();
             if (err) {
-              console.log('error querying database: ', err);
+              logger.error('error querying database: ', err);
               error = 'error querying database',
               callback(error, rows);
             }
@@ -41,13 +42,13 @@ pg_tool.query = function(query_name, params, callback) {
       });
     }
     else {
-      console.log('query does not exist');
+      logger.error('query does not exist');
       error = 'Invalid Query';
       callback(error, rows);
     }
   }
   else {
-    console.log('invalid usage of db tool');
+    logger.error('invalid usage of db tool');
     result = {
       error: 'Invalid usage of DB_Tool',
       rows: null

@@ -6,6 +6,7 @@
 
 let app = require('../app');
 let http = require('http');
+let logger = require('./logging_tool');
 
 /**
  * Get port from environment and store in Express.
@@ -80,4 +81,5 @@ function onListening() {
   let bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
+  logger.info('MosquitoDB listening on port: ', addr.port);
 }

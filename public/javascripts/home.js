@@ -12,6 +12,7 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
   $scope.spec = null;
 
   $scope.results = null;
+  $scope.selectedCollection = null;
 
   $scope.search = function() {
     var query_params = {
@@ -106,5 +107,18 @@ angular.module('mosquitoApp').controller('homeController', function ($scope, $ht
       $scope.search();
     }
   };
+
+  $scope.loadDetails = function(colledtionID) {
+    $http.get($scope.server+'/collection/'+colledtionID).then(function(response) {
+      if (response.data.status === 200) {
+        $scope.selectedCollection = response.data.collection;
+        console.log(response.data.collection)
+        $('#detailsModal').modal('show');
+      }
+      else {
+        console.log(response.data.error);
+      }
+    });
+  }
 
 });

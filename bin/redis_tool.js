@@ -2,6 +2,7 @@
 
 let Redis = require('ioredis');
 const redis_config = require('./secret_settings').redis_config;
+let logger = require('./logging_tool');
 
 let redis_tool = new Redis({
   port: redis_config.port,
@@ -11,7 +12,7 @@ let redis_tool = new Redis({
 });
 
 redis_tool.on('connect', function () {
-  console.log('connected to redis');
+  logger.info('connected to redis');
 });
 
 module.exports = redis_tool;
